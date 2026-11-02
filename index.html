@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#171320">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ficha Polia">
+<meta name="format-detection" content="telephone=no">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<title>Ficha · Polia</title>
+<style>
+@font-face{font-family:'Big Shoulders Display';font-weight:600 800;font-style:normal;font-display:swap;src:url(fonts/big-shoulders-display.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-weight:400 600;font-style:normal;font-display:swap;src:url(fonts/inter.woff2) format('woff2')}
+@font-face{font-family:'JetBrains Mono';font-weight:400 700;font-style:normal;font-display:swap;src:url(fonts/jetbrains-mono.woff2) format('woff2')}
+
+:root{
+  --ink:#171320;
+  --surface:#211B2D;
+  --surface-2:#2A2239;
+  --line:#372C48;
+  --bone:#F4EFE6;
+  --muted:#9A8CAC;
+  --amber:#F0A93B;
+  --amber-dim:#7A5620;
+  --win:#5FD3A6;
+  --hot:#FF5C8A;
+  --disp:'Big Shoulders Display',Impact,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--ink);color:var(--bone);font-family:var(--body);
+  font-size:15px;line-height:1.5;
+  padding-bottom:calc(120px + env(safe-area-inset-bottom));
+  overscroll-behavior-y:contain;
+}
+.wrap{max-width:560px;margin:0 auto;padding:0 14px}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font-family:var(--mono)}
+
+/* ---------- header ---------- */
+header{
+  position:sticky;top:0;z-index:40;background:rgba(23,19,32,.94);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.hrow{display:flex;align-items:center;justify-content:space-between;padding:11px 0 9px}
+.brand{display:flex;align-items:baseline;gap:9px}
+.brand b{font-family:var(--disp);font-size:27px;font-weight:800;letter-spacing:.055em;line-height:1}
+.brand span{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.16em}
+.wchip{
+  font-family:var(--mono);font-size:12px;font-weight:700;border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;color:var(--amber);background:var(--surface);
+}
+
+/* ---------- rail ---------- */
+.rail{display:flex;gap:5px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.day{
+  flex:0 0 auto;font-family:var(--disp);font-size:19px;font-weight:700;letter-spacing:.1em;
+  padding:7px 13px;border-radius:9px;color:var(--muted);border:1px solid transparent;
+  background:var(--surface);transition:.16s;
+}
+.day.on{background:var(--amber);color:#1A1206}
+.day.hoje:not(.on){border-color:var(--amber-dim);color:var(--amber)}
+.day.util{font-family:var(--body);font-size:12px;font-weight:600;letter-spacing:.03em;padding:9px 13px}
+
+/* ---------- day head ---------- */
+.dhead{padding:18px 0 6px}
+.dhead h1{font-family:var(--disp);font-size:52px;font-weight:800;letter-spacing:.02em;line-height:.88;margin:0}
+.dhead p{margin:7px 0 0;color:var(--muted);font-size:13px}
+.bar{height:3px;background:var(--line);border-radius:3px;margin:15px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--amber);width:0;transition:width .35s}
+.barlbl{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.1em}
+
+/* ---------- exercise card ---------- */
+.ex{background:var(--surface);border:1px solid var(--line);border-radius:14px;margin:12px 0;overflow:hidden}
+.ex.star{border-color:var(--amber-dim)}
+.ex.done{opacity:.55}
+.exhead{display:flex;gap:11px;padding:14px;align-items:flex-start;width:100%;text-align:left}
+.num{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);padding-top:3px;min-width:17px}
+.ex.star .num{color:var(--amber)}
+.extit{flex:1;min-width:0}
+.extit h2{margin:0;font-size:15px;font-weight:600;line-height:1.3}
+.meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
+.tagf{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;
+  color:var(--hot);border:1px solid var(--hot);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.caret{color:var(--muted);font-size:12px;padding-top:3px;transition:transform .2s}
+.ex.open .caret{transform:rotate(180deg)}
+
+.detail{display:none;padding:0 14px 14px;border-top:1px solid var(--line);margin-top:2px;padding-top:13px}
+.ex.open .detail{display:block}
+.dsec{margin-bottom:13px}
+.dsec h3{font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:.17em;color:var(--amber);margin:0 0 6px}
+.dsec p{margin:0;font-size:13.5px;color:#D9D1E4}
+.dsec ol{margin:0;padding-left:17px;font-size:13.5px;color:#D9D1E4}
+.dsec ol li{margin-bottom:5px}
+.warn{border-left:2px solid var(--hot);padding-left:10px}
+.warn h3{color:var(--hot)}
+
+.btempo{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:9px;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:12px;
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;color:var(--amber);margin-bottom:13px;
+}
+
+/* ---------- sets ---------- */
+.sets{padding:0 14px 12px}
+.srow{display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--line)}
+.srow:first-child{border-top:0}
+.slbl{font-family:var(--mono);font-size:11px;color:var(--muted);width:26px;flex:0 0 26px}
+.fld{position:relative;flex:1;min-width:0}
+.fld input{
+  width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;
+  color:var(--bone);font-size:16px;font-weight:600;padding:10px 30px 10px 10px;text-align:left;
+}
+.fld input:focus{outline:2px solid var(--amber);outline-offset:-1px;border-color:transparent}
+.fld u{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-family:var(--mono);
+  font-size:10px;color:var(--muted);text-decoration:none;pointer-events:none}
+.ck{flex:0 0 40px;height:40px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);
+  display:grid;place-items:center;font-size:15px;color:var(--muted);transition:.15s}
+.ck.on{background:var(--amber);border-color:var(--amber);color:#1A1206}
+.ghost{font-family:var(--mono);font-size:10.5px;color:var(--muted);padding:0 0 8px 34px;letter-spacing:.02em}
+.ghost b{color:var(--bone);font-weight:600}
+.ghost.beat{color:var(--win)}
+.ghost.beat b{color:var(--win)}
+
+/* ---------- rest bar ---------- */
+.rest{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;transform:translateY(110%);transition:transform .28s;
+  background:var(--surface);border-top:1px solid var(--amber-dim);
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+}
+.rest.up{transform:none}
+.rin{max-width:560px;margin:0 auto;display:flex;align-items:center;gap:13px}
+.rt{font-family:var(--disp);font-size:46px;font-weight:800;line-height:.9;color:var(--amber);
+  font-variant-numeric:tabular-nums;min-width:104px}
+.rmeta{flex:1;min-width:0}
+.rmeta b{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted)}
+.rmeta span{font-size:12.5px;color:#D9D1E4;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rbtn{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;
+  border:1px solid var(--line);border-radius:8px;padding:10px 12px;background:var(--surface-2)}
+.rprog{height:2px;background:var(--line);margin:10px auto 0;max-width:560px;border-radius:2px;overflow:hidden}
+.rprog i{display:block;height:100%;background:var(--amber);width:100%}
+
+/* ---------- metronome ---------- */
+.met{position:fixed;inset:0;z-index:70;background:var(--ink);display:none;
+  flex-direction:column;align-items:center;justify-content:center;padding:24px;
+  padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+.met.up{display:flex}
+.mname{font-size:13px;color:var(--muted);text-align:center;margin-bottom:6px;max-width:320px}
+.mplan{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.1em;margin-bottom:26px}
+.ring{position:relative;width:262px;height:262px;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.rtrack{stroke:var(--line)}
+.rfill{stroke:var(--amber);transition:stroke .2s}
+.mphase{font-family:var(--disp);font-size:56px;font-weight:800;letter-spacing:.05em;line-height:1;text-align:center}
+.mcount{font-family:var(--mono);font-size:38px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums;margin-top:2px}
+.mreps{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.18em;margin-top:26px}
+.mbtns{display:flex;gap:10px;margin-top:26px}
+.mbtn{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.09em;
+  border:1px solid var(--line);border-radius:10px;padding:14px 22px;background:var(--surface)}
+.mbtn.pri{background:var(--amber);color:#1A1206;border-color:var(--amber)}
+
+/* ---------- guia / histórico ---------- */
+.gsec{margin:22px 0}
+.gsec>h2{font-family:var(--disp);font-size:30px;font-weight:800;letter-spacing:.03em;margin:0 0 4px}
+.gsec>p{margin:0 0 12px;color:var(--muted);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:10px}
+.card.hi{border-color:var(--amber-dim)}
+.card h4{margin:0 0 3px;font-size:14px;font-weight:600}
+.card h4 em{font-style:normal;color:var(--amber);font-family:var(--mono);font-size:10px;letter-spacing:.1em;margin-right:6px}
+.card p{margin:0;font-size:13px;color:#D9D1E4}
+.card p.alvo{margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.card p.alvo b{color:var(--win);font-weight:600}
+.rules{counter-reset:r}
+.rule{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.rule:last-child{border:0}
+.rule i{font-family:var(--mono);font-size:11px;color:var(--amber);font-style:normal;padding-top:2px}
+.rule div b{display:block;font-size:14px;margin-bottom:2px}
+.rule div span{font-size:13px;color:var(--muted)}
+
+.wform{display:flex;gap:8px;margin-bottom:12px}
+.wform input{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;
+  color:var(--bone);font-size:16px;font-weight:600;padding:12px}
+.wform button{background:var(--amber);color:#1A1206;border-radius:9px;padding:0 18px;
+  font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.08em}
+.goal{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px;margin-bottom:12px}
+.gnum{display:flex;align-items:baseline;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gnum b{font-family:var(--disp);font-size:42px;font-weight:800;color:var(--bone);line-height:1}
+.gbar{height:9px;background:var(--line);border-radius:9px;margin:12px 0 6px;overflow:hidden}
+.gbar i{display:block;height:100%;background:linear-gradient(90deg,var(--amber),var(--win));width:0;transition:width .5s}
+
+.hex{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:9px}
+.hex .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.hex .top b{font-size:13.5px;font-weight:600}
+.hex .top span{font-family:var(--mono);font-size:11px;color:var(--win);white-space:nowrap}
+.hex svg{display:block;width:100%;height:38px;margin-top:9px}
+.empty{text-align:center;color:var(--muted);font-size:13px;padding:36px 20px;
+  border:1px dashed var(--line);border-radius:13px}
+.danger{width:100%;border:1px solid var(--line);border-radius:10px;padding:13px;color:var(--hot);
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;margin-top:8px}
+.note{font-size:11.5px;color:var(--muted);line-height:1.55;margin:16px 0 30px;border-top:1px solid var(--line);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== extras do app ===== */
+body{padding-bottom:calc(130px + env(safe-area-inset-bottom));-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input{-webkit-user-select:text;user-select:text}
+.brand span{white-space:nowrap}
+.fire{display:flex;align-items:center;gap:7px;padding:5px 13px 5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);transition:.25s}
+.fire .fl{font-size:26px;line-height:1;filter:grayscale(1) brightness(.7);transition:.3s;display:inline-block}
+.fire b{font-family:var(--disp);font-size:30px;font-weight:800;line-height:1;color:var(--muted);font-variant-numeric:tabular-nums}
+.fire small{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.13em;color:var(--muted);margin-top:1px}
+.fire.wait .fl{filter:grayscale(.6) brightness(.9)}
+.fire.wait b{color:var(--amber)}
+.fire.wait{border-color:var(--amber-dim)}
+.fire.on{border-color:var(--amber);background:linear-gradient(135deg,#3a2810,var(--surface));box-shadow:0 0 18px rgba(240,169,59,.35)}
+.fire.on .fl{filter:none;animation:flick 1.3s ease-in-out infinite}
+.fire.on b{color:var(--amber)}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-2deg)}50%{transform:scale(1.14) rotate(3deg)}}
+.stmsg{margin:10px 0 0;padding:9px 12px;border-radius:10px;font-size:12.5px;background:var(--surface);border:1px solid var(--line);color:#D9D1E4}
+.stmsg.ok{border-color:var(--win);color:var(--win)}
+.stmsg.warn2{border-color:var(--hot);color:var(--hot)}
+.tagp{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;border:1px solid var(--win);color:var(--win)}
+.tagp.mq{border-color:var(--muted);color:var(--muted)}
+.tagp.lv{border-color:var(--amber-dim);color:var(--amber)}
+.dsec.why h3{color:var(--muted)}
+.dsec.pump h3{color:var(--win)}
+.dsec.pump p{color:var(--bone)}
+.vids{display:flex;flex-direction:column;gap:7px}
+.vid{display:flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;color:var(--bone)}
+.vid i{flex:0 0 28px;height:28px;border-radius:50%;background:var(--amber);color:#1A1206;display:grid;place-items:center;font-style:normal;font-size:11px}
+.vid span{min-width:0;font-size:12.5px;line-height:1.3}
+.vid span em{display:block;font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.06em;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vid span b{font-weight:600;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vnote{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:6px;letter-spacing:.04em}
+.prb{color:var(--amber);font-weight:700}
+.concl{width:100%;margin:18px 0 4px;padding:17px;border-radius:13px;background:var(--amber);color:#1A1206;font-family:var(--disp);font-size:26px;font-weight:800;letter-spacing:.07em;display:flex;align-items:center;justify-content:center;gap:10px}
+.concl.feito{background:var(--surface);border:1px solid var(--win);color:var(--win);font-size:20px}
+.concl:active{transform:scale(.985)}
+.undo{display:block;margin:6px auto 0;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em;padding:8px;text-decoration:underline}
+.toast{position:fixed;left:50%;top:calc(76px + env(safe-area-inset-top));transform:translate(-50%,-30px);opacity:0;z-index:90;max-width:90%;
+  background:var(--amber);color:#1A1206;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.06em;padding:10px 16px;border-radius:999px;transition:.3s;pointer-events:none;text-align:center}
+.toast.up{transform:translate(-50%,0);opacity:1}
+/* celebração */
+.cel{position:fixed;inset:0;z-index:100;background:rgba(23,19,32,.97);display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;overflow:hidden}
+.cel.up{display:flex}
+.celin{position:relative;z-index:2;max-width:380px;width:100%;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:none;opacity:1}}
+.bigfire{font-size:104px;line-height:1.1;margin-bottom:8px;display:inline-block;animation:burn 1.1s ease-in-out infinite;filter:drop-shadow(0 0 28px rgba(240,169,59,.7))}
+@keyframes burn{0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.18) rotate(4deg)}}
+.celnum{font-family:var(--disp);font-size:96px;font-weight:800;color:var(--amber);line-height:.9;margin-top:4px;font-variant-numeric:tabular-nums}
+.cellbl{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--muted);margin-bottom:16px}
+.cel h2{font-family:var(--disp);font-size:36px;font-weight:800;letter-spacing:.04em;margin:0 0 6px;line-height:1}
+.cel p{margin:0 0 12px;color:#D9D1E4;font-size:14.5px}
+.celx{margin:6px 0 16px;display:flex;flex-direction:column;gap:6px}
+.celx div{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--surface);color:var(--bone)}
+.celx div.rec{border-color:var(--amber);color:var(--amber)}
+.celx div.mk{border-color:var(--win);color:var(--win)}
+.conf{position:absolute;inset:0;z-index:1;pointer-events:none}
+.conf i{position:absolute;top:-14px;left:var(--x);width:9px;height:15px;background:var(--c);opacity:.95;border-radius:2px;animation:fall var(--d) linear var(--dl) forwards}
+@keyframes fall{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(112vh) rotate(var(--r))}}
+/* sequência */
+.hero{background:linear-gradient(160deg,#33240f,var(--surface));border:1px solid var(--amber-dim);border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:12px}
+.hero.off{background:var(--surface);border-color:var(--line)}
+.hero .hf{font-size:64px;line-height:1;display:inline-block}
+.hero.on .hf{animation:burn 1.1s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(240,169,59,.6))}
+.hero.off .hf{filter:grayscale(1) brightness(.6)}
+.hero .hn{font-family:var(--disp);font-size:84px;font-weight:800;line-height:.9;color:var(--amber)}
+.hero.off .hn{color:var(--muted)}
+.hero .hl{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--muted)}
+.hero p{margin:10px 0 0;font-size:13px;color:#D9D1E4}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 8px;text-align:center}
+.stat b{display:block;font-family:var(--disp);font-size:32px;font-weight:800;line-height:1}
+.stat span{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--muted)}
+.heat{display:grid;grid-template-rows:repeat(7,1fr);grid-auto-flow:column;gap:4px}
+.hc{aspect-ratio:1;border-radius:4px;background:var(--surface-2);border:1px solid var(--line)}
+.hc.on{background:var(--amber);border-color:var(--amber)}
+.hc.part{background:var(--amber-dim);border-color:var(--amber-dim)}
+.hc.miss{background:var(--surface);border-color:#4a2a3a}
+.hc.rest{background:transparent;border-style:dashed}
+.hc.fut{background:transparent;border-color:transparent}
+.hc.hj{outline:2px solid var(--bone);outline-offset:1px}
+.hleg{display:flex;gap:11px;flex-wrap:wrap;margin-top:10px;font-family:var(--mono);font-size:9.5px;color:var(--muted)}
+.hleg span{display:flex;align-items:center;gap:5px}
+.hleg i{width:11px;height:11px;border-radius:3px;display:inline-block;border:1px solid var(--line)}
+.hdw{display:grid;grid-template-rows:repeat(7,1fr);gap:4px;font-family:var(--mono);font-size:8.5px;color:var(--muted)}
+.hwrap{display:grid;grid-template-columns:16px 1fr;gap:6px}
+.hdw span{display:grid;place-items:center}
+/* evolução */
+.chips{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted)}
+.chip.on{background:var(--amber);border-color:var(--amber);color:#1A1206}
+.evx{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:13px 14px;margin-bottom:10px}
+.evx.pr{border-color:var(--amber-dim)}
+.evx .top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.evx .top b{font-size:13.5px;font-weight:600}
+.evx .badge{font-family:var(--mono);font-size:10px;font-weight:700;color:#1A1206;background:var(--amber);border-radius:999px;padding:3px 8px;white-space:nowrap}
+.evx .sub{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-top:3px}
+.evx .sub b{color:var(--win);font-weight:600}
+.evx svg{display:block;width:100%;height:auto;margin-top:8px}
+.evx .inc{margin-top:8px;border-top:1px solid var(--line);padding-top:7px;font-family:var(--mono);font-size:10.5px;color:var(--muted)}
+.evx .inc div{display:flex;justify-content:space-between;padding:2px 0}
+.evx .inc div b{color:var(--win);font-weight:600}
+.recl{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:8px 0;border-top:1px solid var(--line)}
+.recl:first-child{border-top:0}
+.recl span{font-family:var(--mono);font-size:11px;color:var(--amber);white-space:nowrap}
+.vbar{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;padding:4px 0}
+.vbar u{text-decoration:none;width:78px;color:var(--muted)}
+.vbar div{flex:1;height:8px;background:var(--line);border-radius:8px;overflow:hidden}
+.vbar div i{display:block;height:100%;background:var(--amber)}
+.vbar b{width:26px;text-align:right}
+.btn2{width:100%;border:1px solid var(--line);border-radius:10px;padding:13px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.09em;margin-top:8px;background:var(--surface)}
+@media (prefers-reduced-motion:reduce){.fire.on .fl,.bigfire,.hero.on .hf{animation:none!important}.conf{display:none}}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="hrow">
+      <div class="brand"><b>FICHA</b><span>100% POLIA</span></div>
+      <button class="fire" id="fire" onclick="go('seq')" aria-label="Sequência"></button>
+    </div>
+    <nav class="rail" id="rail"></nav>
+  </div>
+</header>
+<main class="wrap" id="main"></main>
+<div class="toast" id="toast"></div>
+<div class="rest" id="rest">
+  <div class="rin">
+    <div class="rt" id="rtime">0:00</div>
+    <div class="rmeta"><b>DESCANSO</b><span id="rname">—</span></div>
+    <button class="rbtn" onclick="addRest(30)">+30s</button>
+    <button class="rbtn" onclick="stopRest()">PULAR</button>
+  </div>
+  <div class="rprog"><i id="rprog"></i></div>
+</div>
+<div class="met" id="met">
+  <div class="mname" id="mname">—</div>
+  <div class="mplan" id="mplan">—</div>
+  <div class="ring">
+    <svg viewBox="0 0 120 120"><circle class="rtrack" cx="60" cy="60" r="54"/><circle class="rfill" id="rfill" cx="60" cy="60" r="54"/></svg>
+    <div><div class="mphase" id="mphase">PRONTA?</div><div class="mcount" id="mcount">—</div></div>
+  </div>
+  <div class="mreps" id="mreps">REPETIÇÃO 0</div>
+  <div class="mbtns"><button class="mbtn" onclick="closeMet()">SAIR</button><button class="mbtn pri" id="mtoggle" onclick="toggleMet()">COMEÇAR</button></div>
+</div>
+<div class="cel" id="cel">
+  <div class="conf" id="conf"></div>
+  <div class="celin">
+    <div class="bigfire">🔥</div>
+    <div class="celnum" id="celnum">0</div>
+    <div class="cellbl">DIAS DE SEQUÊNCIA</div>
+    <h2 id="celtit">TREINO CONCLUÍDO</h2>
+    <p id="celmsg"></p>
+    <div class="celx" id="celx"></div>
+    <button class="mbtn pri" style="width:100%" onclick="closeCel()">CONTINUAR</button>
+  </div>
+</div>
+<script>
+/* ============ armazenamento (localStorage com fallback em memória) ============ */
+const Store=(()=>{
+  let ok=true,mem={};
+  try{localStorage.setItem('__t','1');localStorage.removeItem('__t')}catch(e){ok=false}
+  return{
+    get(k,d){try{const v=ok?localStorage.getItem(k):mem[k];return v?JSON.parse(v):d}catch(e){return d}},
+    set(k,v){try{const s=JSON.stringify(v);ok?localStorage.setItem(k,s):mem[k]=s}catch(e){mem[k]=JSON.stringify(v)}},
+    del(k){try{ok?localStorage.removeItem(k):delete mem[k]}catch(e){}}
+  }
+})();
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+
+/* ============ plano (6 dias · domingo descanso) ============ */
+const T=(...a)=>a.map(x=>({f:x[0],s:x[1]}));
+const V=id=>id;
+const PLANO={
+seg:{nome:'SEGUNDA',foco:'Glúteo · máximo + base pesada',ex:[
+ {id:'s_hip',n:'Elevação pélvica com pausa (barra)',tp:'LIVRE',m:'Glúteo',p:'4 × 8–10',s:4,r:180,star:1,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
+  why:'Exceção de polia: é o exercício de maior carga para o glúteo máximo e nenhuma polia entrega essa sobrecarga. A versão na polia vem logo depois.',
+  setup:'Escápulas na borda do banco, barra com almofada na dobra do quadril. Canelas verticais no topo, queixo encolhido.',
+  exec:['Sobe em 2s empurrando os calcanhares até formar linha reta do joelho ao ombro.','Pausa 2s no topo apertando o glúteo, costelas fechadas.','Desce em 3s até quase tocar o chão. Nada de quicar.'],
+  erro:'Hiperextender a lombar no topo em vez de contrair o glúteo. A linha reta é no quadril, não nas costas.',
+  v:[V('xDmFkJxPzeM'),V('KYhMic5gn9U')]},
+ {id:'s_pull',n:'Pull-through na polia',tp:'POLIA',m:'Glúteo',p:'3 × 10–15',s:3,r:120,t:T(['VOLTA',3],['ALONGA',1],['ESTENDE',1],['APERTA',1]),
+  setup:'De costas para a polia baixa, corda entre as pernas. Dá 2 passos à frente, pés na largura dos ombros, joelhos levemente flexionados e fixos.',
+  exec:['Empurra o quadril para trás, coluna neutra, corda passando entre as pernas.','Sente o posterior e o glúteo alongarem.','Estende o quadril à frente apertando forte o glúteo no topo, sem arquear a lombar.'],
+  erro:'Agachar em vez de levar o quadril para trás. Movimento de dobradiça, joelho quase parado.',
+  v:[V('yXopOhzEoeo'),V('pv8e6OSyETE')]},
+ {id:'s_bulg',n:'Afundo búlgaro · foco glúteo',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,t:T(['DESCE',3],['PAUSA',1],['SOBE',1]),
+  why:'Exceção de polia: não existe versão em cabo com o mesmo desafio de equilíbrio e alongamento do glúteo. Use halteres.',
+  setup:'Peito do pé de trás no banco. Passo longo, tronco inclinado à frente (mais glúteo). Ereto = mais quadríceps.',
+  exec:['Desce em 3s até o joelho de trás quase tocar o chão.','Pausa 1s embaixo.','Sobe em 1s empurrando com o calcanhar da frente.'],
+  erro:'Passo curto demais joga tudo no joelho da frente. Se não sentir o glúteo, alonga o passo.',
+  v:[V('pdau2xieCCs')]},
+ {id:'s_coice',n:'Coice na polia (extensão de quadril)',tp:'POLIA',m:'Glúteo',p:'3 × 12–20 cada perna',s:3,r:90,f:1,t:T(['ESTENDE',1],['APERTA',2],['VOLTA',3]),
+  tec:'Última série: rest-pause. Vai à falha, descansa 15s, mais reps até a falha, 15s, mais reps. Depois troca de perna.',
+  setup:'Tornozeleira, de frente para a polia baixa, tronco inclinado apoiado no aparelho. Joelho levemente flexionado.',
+  exec:['Estende o quadril para trás em 1s. O movimento é de quadril, não de lombar.','Pausa 2s apertando o glúteo.','Volta em 3s até o glúteo alongar.'],
+  erro:'Arquear a lombar para ganhar amplitude. Se a lombar mexe, o peso está alto.',
+  v:[V('XYCCcD0MxN8')]},
+ {id:'s_hipcabo',n:'Elevação pélvica na polia',tp:'POLIA',m:'Glúteo',p:'2 × 10–15',s:2,r:90,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
+  setup:'Mesma posição da elevação pélvica, de costas para a polia baixa, cabo na barra ou no cinto. A tensão continua forte no topo, onde a barra livre alivia.',
+  exec:['Sobe em 2s até a linha reta.','Pausa 2s apertando.','Desce em 3s sem soltar a tensão do cabo.'],
+  erro:'Soltar a carga embaixo. O cabo mantém a tensão o tempo todo: aproveite.',
+  v:[V('WieGZholDKI')]},
+ {id:'s_frog',n:'Frog pump (finalizador)',tp:'LIVRE',m:'Glúteo',p:'2 × 30–50',s:2,r:60,f:1,t:T(['SOBE',1],['APERTA',1],['DESCE',1]),
+  tec:'Pump final: reps rápidas e curtas, sem soltar o glúteo. Queimação é o objetivo.',
+  setup:'Deitada, plantas dos pés coladas, joelhos abertos. Opcional: halter ou anilha sobre o quadril.',
+  exec:['Sobe o quadril em 1s, aperta 1s no topo.','Desce em 1s sem apoiar totalmente.','Mantém o ritmo até a queimação forçar a parar.'],
+  erro:'Fazer devagar demais. Aqui o ponto é pump metabólico, não carga.',
+  v:[V('rgljhH1X4vc')]}
+]},
+
+ter:{nome:'TERÇA',foco:'Quadríceps + posterior + panturrilha',ex:[
+ {id:'t_hack',n:'Agachamento hack (máquina)',tp:'MÁQUINA',m:'Quadríceps',p:'3 × 8–12',s:3,r:150,star:1,t:T(['DESCE',3],['PAUSA',1],['SOBE',2]),
+  why:'Exceção de polia: o hack entrega carga alta e estável para o quadríceps; não há cabo equivalente. A polia entra no sissy e na extensão de joelho.',
+  setup:'Pés baixos e juntos na plataforma para focar o quadríceps. Costas coladas, ombros nas almofadas.',
+  exec:['Desce em 3s o mais fundo possível, calcanhar no chão.','Pausa 1s embaixo.','Sobe em 2s sem travar o joelho.'],
+  erro:'Calcanhar saindo do chão. Se sair, afasta um pouco os pés.',
+  v:[V('4cxt_Tldugw')]},
+ {id:'t_sissy',n:'Sissy squat na polia',tp:'POLIA',m:'Quadríceps',p:'3 × 8–15',s:3,r:90,t:T(['DESCE',3],['SOBE',2]),
+  setup:'Cabo ligado a um cinto ou segurado ao peito, dando resistência para trás. Apoia a mão e sobe no calcanhar, joelhos vão à frente.',
+  exec:['Joelhos avançam e o corpo inclina para trás, linha reta joelho a ombro.','Desce em 3s até o máximo alongamento do quadríceps.','Sobe em 2s apertando o quadríceps.'],
+  erro:'Dobrar o quadril. O corpo é uma prancha que gira nos joelhos.',
+  v:[V('dF8VQDzywBo')]},
+ {id:'t_ext',n:'Cadeira extensora (recostada)',tp:'MÁQUINA',m:'Quadríceps',p:'3 × 12–15',s:3,r:90,f:1,t:T(['SOBE',1],['APERTA',2],['DESCE',4]),
+  why:'Exceção de polia: a máquina isola melhor o reto femoral na posição recostada. Alternativa em cabo: extensão de joelho na polia (sábado).',
+  tec:'Última série: drop set. Falha, tira 30% da carga, mais 8–10 reps sem descanso.',
+  setup:'Costas bem recostadas, joelho alinhado ao eixo, segura as alças.',
+  exec:['Sobe em 1s até a extensão completa.','Pausa 2s apertando o quadríceps.','Desce em 4s controlando.'],
+  erro:'Soltar o peso na descida. A fase excêntrica é metade do estímulo.',
+  v:[V('ljO4jkwv8wQ')]},
+ {id:'t_flexs',n:'Cadeira flexora sentada',tp:'MÁQUINA',m:'Posterior',p:'4 × 8–12',s:4,r:120,star:1,t:T(['FLEXIONA',2],['APERTA',2],['VOLTA',4]),
+  why:'Exceção de polia: é a variação mais bem evidenciada para hipertrofia do posterior (posição alongada). Cabo entra logo abaixo.',
+  setup:'Encosto ajustado, almofada travando a coxa, joelho no eixo da máquina.',
+  exec:['Flexiona em 2s até o máximo.','Pausa 2s apertando.','Volta em 4s resistindo até a extensão total.'],
+  erro:'Levantar o quadril do banco. Se levantar, a carga está alta.',
+  v:[V('AFG0wxXmTH4')]},
+ {id:'t_stiffp',n:'Stiff na polia',tp:'POLIA',m:'Posterior',p:'3 × 10–12',s:3,r:120,t:T(['DESCE',4],['PAUSA',1],['SOBE',2]),
+  setup:'De frente para a polia baixa, barra ou corda. Joelho com flexão fixa de ~15°. Cabo colado nas pernas.',
+  exec:['Empurra o quadril para trás em 4s, coluna neutra.','Desce até o alongamento máximo do posterior e pausa 1s.','Sobe em 2s apertando o glúteo.'],
+  erro:'Virar agachamento. O quadril vai para trás, o joelho não dobra mais.',
+  v:[V('f2rO8ZCMan8')]},
+ {id:'t_flexp',n:'Flexão de joelho em pé na polia',tp:'POLIA',m:'Posterior',p:'3 × 10–15 cada perna',s:3,r:90,f:1,t:T(['FLEXIONA',2],['APERTA',1],['VOLTA',3]),
+  setup:'De frente para a polia baixa, tornozeleira, apoiada na máquina. Quadril quieto.',
+  exec:['Flexiona o joelho em 2s levando o calcanhar ao glúteo.','Pausa 1s.','Volta em 3s sem soltar a tensão.'],
+  erro:'Balançar o quadril para ajudar a subir.',
+  v:[V('dZY4PRgzNkc')]},
+ {id:'t_pante',n:'Panturrilha em pé',tp:'MÁQUINA',m:'Panturrilha',p:'4 × 8–15',s:4,r:75,t:T(['DESCE',3],['ALONGA',2],['SOBE',1],['APERTA',1]),
+  why:'Exceção de polia: panturrilha precisa de muita carga e amplitude; a máquina em pé é a mais prática. Versão na polia fica na sexta.',
+  setup:'Ponta do pé na plataforma, calcanhar livre para descer abaixo da linha.',
+  exec:['Desce em 3s até o alongamento máximo.','Pausa 2s embaixo.','Sobe em 1s e aperta 1s no topo.'],
+  erro:'Quicar. Sem a pausa embaixo, o tendão faz o trabalho no lugar do músculo.',
+  v:[V('xIq9K_oeTK4')]},
+ {id:'t_pants',n:'Panturrilha sentada',tp:'MÁQUINA',m:'Panturrilha',p:'3 × 12–20',s:3,r:60,t:T(['DESCE',3],['ALONGA',2],['SOBE',1],['APERTA',1]),
+  setup:'Joelho flexionado a 90°, almofada sobre a coxa. Trabalha o sóleo.',
+  exec:['Desce em 3s, pausa 2s alongada, sobe em 1s e aperta 1s.'],
+  erro:'Amplitude curta. A pausa embaixo é obrigatória.',
+  v:[V('3VyJNC1Gh1k')]}
+]},
+
+qua:{nome:'QUARTA',foco:'Superiores · costas, tríceps, antebraço',ex:[
+ {id:'q_puxada',n:'Puxada frontal na polia',tp:'POLIA',m:'Costas',p:'4 × 8–12',s:4,r:120,star:1,t:T(['PUXA',2],['APERTA',1],['SOBE',3]),
+  setup:'Pegada um pouco mais aberta que os ombros, peito alto, joelhos travados na almofada.',
+  exec:['Puxa em 2s levando o cotovelo para baixo e para trás: "cotovelo no bolso".','Barra até a clavícula, pausa 1s apertando as escápulas.','Sobe em 3s deixando o dorsal alongar no final.'],
+  erro:'Jogar o tronco para trás para puxar mais peso.',
+  v:[V('YywSCu4Y360'),V('QTQABcLosXk')]},
+ {id:'q_remb',n:'Remada baixa na polia (triângulo)',tp:'POLIA',m:'Costas',p:'3 × 8–12',s:3,r:120,t:T(['PUXA',2],['APERTA',1],['VOLTA',3]),
+  setup:'Sentada, joelhos levemente flexionados, coluna neutra, triângulo ou barra neutra.',
+  exec:['Puxa em 2s levando o cotovelo ao quadril, peito aberto.','Pausa 1s com as escápulas juntas.','Volta em 3s deixando as escápulas abrirem à frente sem curvar a coluna.'],
+  erro:'Balançar o tronco. A carga é do dorsal e do meio das costas, não do impulso.',
+  v:[V('f8AVh4VBbos'),V('EHHKXwVcAoM')]},
+ {id:'q_remu',n:'Remada unilateral na polia',tp:'POLIA',m:'Costas',p:'3 × 10–12 cada lado',s:3,r:90,t:T(['PUXA',2],['APERTA',1],['VOLTA',3]),
+  setup:'Em pé ou sentada, uma mão na manopla, tronco levemente inclinado e estável.',
+  exec:['Puxa em 2s, cotovelo junto ao corpo.','Pausa 1s.','Volta em 3s alongando o dorsal e rodando levemente o ombro à frente.'],
+  erro:'Rodar demais o tronco. Fica estável, só o braço e a escápula trabalham.',
+  v:[V('HcyPuf31RmE')]},
+ {id:'q_pull',n:'Pullover na polia alta (braços retos)',tp:'POLIA',m:'Costas',p:'3 × 12–15',s:3,r:90,f:1,t:T(['PUXA',2],['APERTA',2],['VOLTA',3]),
+  tec:'Última série: drop set de 2 quedas. Mantém o cotovelo fixo.',
+  setup:'Em pé, tronco inclinado à frente, braços quase retos, corda na polia alta.',
+  exec:['Puxa a corda em arco até a coxa em 2s, cotovelo fixo.','Pausa 2s apertando o dorsal.','Volta em 3s até o alongamento.'],
+  erro:'Dobrar o cotovelo transforma em tríceps.',
+  v:[V('fe8hkrddMtE')]},
+ {id:'q_face',n:'Face pull / crucifixo inverso na polia',tp:'POLIA',m:'Ombro',p:'3 × 15–20',s:3,r:60,t:T(['PUXA',2],['APERTA',1],['VOLTA',3]),
+  setup:'Polia alta com corda, cotovelos altos, puxa em direção ao rosto abrindo as mãos.',
+  exec:['Puxa em 2s com cotovelos na altura dos ombros.','Pausa 1s apertando o deltoide posterior.','Volta em 3s.'],
+  erro:'Usar carga demais e puxar com as costas. É posterior de ombro e postura.',
+  v:[V('z4cDN2oTVxQ'),V('hLeP8KiXLgY')]},
+ {id:'q_fran',n:'Tríceps francês na polia (corda)',tp:'POLIA',m:'Tríceps',p:'3 × 10–15',s:3,r:90,star:1,t:T(['ESTENDE',1],['APERTA',1],['VOLTA',3]),
+  setup:'De costas para a polia, corda atrás da cabeça, cotovelos apontando para cima e fixos.',
+  exec:['Estende o cotovelo em 1s abrindo a corda no final.','Pausa 1s apertando.','Volta em 3s alongando bem a cabeça longa do tríceps.'],
+  erro:'Cotovelos abrindo. Eles ficam fixos e apontando para frente.',
+  v:[V('PlQOxSm_ZWI'),V('zjbKswHOH_I')]},
+ {id:'q_tri',n:'Tríceps pulley (corda)',tp:'POLIA',m:'Tríceps',p:'3 × 12–15',s:3,r:75,f:1,t:T(['ESTENDE',1],['APERTA',1],['VOLTA',3]),
+  tec:'Última série: drop set 2×. Tira 25–30% da carga em cada queda, sem descanso.',
+  setup:'Cotovelos colados ao corpo e fixos o movimento todo.',
+  exec:['Estende em 1s abrindo a corda no final.','Pausa 1s.','Volta em 3s.'],
+  erro:'Cotovelo indo e voltando: vira remada.',
+  v:[V('KhK5HWJfsrQ'),V('btj6dDfAQ2w')]},
+ {id:'q_punho',n:'Rosca de punho na polia',tp:'POLIA',m:'Antebraço',p:'3 × 15–20',s:3,r:60,t:T(['DESCE',3],['SOBE',1],['APERTA',1]),
+  setup:'Sentada de frente para a polia baixa, antebraços apoiados na coxa ou no banco, palmas para cima, punhos fora da borda.',
+  exec:['Desce em 3s deixando a barra rolar até a ponta dos dedos.','Fecha os dedos e sobe em 1s.','Aperta 1s no topo.'],
+  erro:'Não deixar a barra rolar até os dedos corta metade da amplitude.',
+  v:[V('agVfOWgs21Y')]},
+ {id:'q_inv',n:'Rosca inversa na polia',tp:'POLIA',m:'Antebraço',p:'2 × 12–15',s:2,r:60,t:T(['SOBE',2],['DESCE',3]),
+  setup:'Polia baixa com barra reta, pegada por cima, punho firme e neutro, cotovelo colado.',
+  exec:['Sobe em 2s.','Desce em 3s até a extensão completa.'],
+  erro:'Trabalha o braquiorradial, a parte de cima do antebraço. Carga baixa.',
+  v:[V('Ji_KYs4w59U'),V('BMsC8Zllrmc')]},
+ {id:'q_farm',n:'Farmer walk',tp:'LIVRE',m:'Antebraço',p:'2 × 40 segundos',s:2,r:90,pl:'40 segundos de caminhada',
+  why:'Exceção de polia: é exercício de pegada pesada e caminhada com halteres.',
+  setup:'Halteres pesados nas mãos, postura ereta, escápulas puxadas para trás.',
+  exec:['Caminha 40 segundos sem encolher os ombros.','Respiração contínua, abdômen firme. No campo REPS anote os segundos.'],
+  erro:'Ombro subindo em direção à orelha. Pegada, antebraço e trapézio de uma vez.',
+  v:[V('xb1GMZacM8w')]},
+ {id:'q_lat',n:'Elevação lateral na polia (opcional · ombro)',tp:'POLIA',m:'Ombro',p:'3 × 12–20',s:3,r:60,f:1,t:T(['SOBE',2],['SEGURA',1],['DESCE',3]),
+  setup:'Polia baixa, manopla na mão de fora do corpo. Cotovelo levemente flexionado e sempre acima da mão.',
+  exec:['Sobe em 2s até a linha do ombro.','Pausa 1s.','Desce em 3s sem balanço. A polia mantém tensão embaixo, onde o halter alivia.'],
+  erro:'Jogar o corpo. Se precisa balançar, o peso está alto.',
+  v:[V('3vbYw9xklBc')]},
+ {id:'q_bay',n:'Rosca bayesian na polia (opcional · bíceps)',tp:'POLIA',m:'Bíceps',p:'2 × 12–15',s:2,r:60,t:T(['SOBE',2],['APERTA',1],['DESCE',3]),
+  setup:'De costas para a polia baixa, braço atrás do corpo, cotovelo à frente do tronco. O bíceps fica alongado desde o início.',
+  exec:['Sobe em 2s sem tirar o cotovelo da posição.','Pausa 1s.','Desce em 3s até alongar completamente.'],
+  erro:'Balançar o tronco. Carga leve, alongamento máximo.',
+  v:[V('VyhB_4ILuzs')]}
+]},
+
+qui:{nome:'QUINTA',foco:'Glúteo · médio, mínimo e pump',ex:[
+ {id:'u_abd',n:'Cadeira abdutora · pontinha, tronco ~45° à frente',tp:'MÁQUINA',m:'Glúteo',p:'4 × 15–25',s:4,r:90,f:1,star:1,t:T(['ABRE',2],['SEGURA',2],['FECHA',3]),
+  why:'Exceção de polia: pedido específico. Na máquina a carga e o ajuste de amplitude são melhores. A versão em cabo é o exercício seguinte.',
+  tec:'Última série: drop set 2× + 10 parciais curtos na abertura máxima. Queimação do glúteo médio.',
+  setup:'Senta na beirada da frente do banco. Inclina o tronco ~45° à frente com a coluna reta. Segura as alças só para travar o tronco. Joelhos e pés rodados para fora.',
+  exec:['ABRE em 2s, controlada, até a amplitude máxima.','SEGURA 2s na abertura máxima apertando o glúteo.','FECHA em 3s resistindo, sem encostar as placas entre as reps.','Mantém a tensão na série toda.'],
+  erro:'Soltar o tronco para trás e virar a posição padrão. A inclinação é o que muda o estímulo.',
+  v:[V('rcjr9e5OM9c'),V('zmmgrcRZc4I')]},
+ {id:'u_abdp',n:'Abdução de quadril em pé na polia',tp:'POLIA',m:'Glúteo',p:'4 × 12–20 cada perna',s:4,r:75,f:1,t:T(['ABRE',2],['SEGURA',2],['FECHA',3]),
+  tec:'Última série: rest-pause. Falha, 15s, mais reps, 15s, mais reps.',
+  setup:'Em pé segurando um suporte, tornozeleira na perna de fora. Ponta do pé levemente voltada para o chão ou neutra.',
+  exec:['Abre a perna lateralmente em 2s.','Segura 2s no topo.','Fecha em 3s com o tronco firme.'],
+  erro:'Jogar o corpo para o lado contrário. Se isso acontece, o peso está alto demais.',
+  v:[V('hQOfjxHnRvg'),V('qM1v8SG0yzY')]},
+ {id:'u_step',n:'Step-up alto',tp:'LIVRE',m:'Glúteo',p:'2 × 8–12 cada perna',s:2,r:120,t:T(['SOBE',1],['DESCE',3]),
+  why:'Exceção de polia: movimento com o peso do corpo e halteres, sem equivalente em cabo.',
+  setup:'Caixa na altura do joelho ou um pouco mais baixa. Tronco levemente à frente. A perna da frente faz o trabalho.',
+  exec:['Sobe empurrando só com o calcanhar da frente.','Desce em 3s devagar sem empurrar com a perna de trás.'],
+  erro:'Impulsionar com a perna de baixo.',
+  v:[V('ho6RHQuqftY')]},
+ {id:'u_curt',n:'Afundo cruzado (curtsy)',tp:'LIVRE',m:'Glúteo',p:'3 × 10–15 cada perna',s:3,r:90,t:T(['DESCE',3],['SOBE',1]),
+  why:'Exceção de polia: cruza a perna e exige glúteo médio; só existe com halteres ou peso corporal.',
+  setup:'Halteres nas mãos. Dá um passo atrás cruzando uma perna atrás da outra.',
+  exec:['Desce em 3s com o tronco levemente inclinado à frente.','Sobe em 1s empurrando com a perna da frente.'],
+  erro:'Joelho da frente caindo para dentro.',
+  v:[V('LGlgmlCkuWg')]},
+ {id:'u_bstan',n:'Elevação pélvica unilateral (apoio de costas)',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
+  why:'Exceção de polia: mesma lógica da elevação pélvica de segunda, agora unilateral para o glúteo médio estabilizar.',
+  setup:'Escápulas no banco, uma perna apoiada e a outra levantada. Carga sobre o quadril.',
+  exec:['Sobe em 2s empurrando com o calcanhar.','Pausa 2s apertando o glúteo e controlando o quadril.','Desce em 3s.'],
+  erro:'Deixar o quadril girar para o lado da perna livre.',
+  v:[V('IW-xVGlldho'),V('Rf_Negac_FA')]},
+ {id:'u_giga',n:'Giga série finalizadora · pump total',tp:'POLIA',m:'Glúteo',p:'2 rodadas',s:2,r:120,f:1,pl:'Abdução 15 + coice 15 + frog pump 30, sem descanso',
+  tec:'Giga série: abdução na polia 15 reps, coice na polia 15 reps e frog pump 30 reps, sem descanso entre os três. Descansa 2 min e repete (cada rodada conta 1 série).',
+  setup:'Mesma polia, mesma perna, sem parar. Anote na carga o maior peso da rodada.',
+  exec:['15 abduções de quadril na polia.','15 coices na polia.','30 frog pumps no chão.','Descansa 2 min e repete na outra perna ou na mesma, como preferir.'],
+  erro:'Nesta série o objetivo é queimação e pump. Se a técnica desmontar, reduz o peso.',
+  v:[V('hQOfjxHnRvg'),V('XYCCcD0MxN8')]}
+]},
+
+sex:{nome:'SEXTA',foco:'Perna inteira',ex:[
+ {id:'x_sumo',n:'Agachamento sumô',tp:'LIVRE',m:'Quadríceps',p:'3 × 8–12',s:3,r:120,t:T(['DESCE',3],['PAUSA',1],['SOBE',2]),
+  why:'Exceção de polia: agachamento com peso livre para fechar o dia de perna inteira.',
+  setup:'Pés bem afastados, pontas voltadas para fora, halter ou kettlebell na frente do corpo.',
+  exec:['Desce em 3s com o tronco ereto.','Pausa 1s embaixo.','Sobe em 2s empurrando o chão.'],
+  erro:'Joelhos fechando para dentro.',
+  v:[V('SozaXNWVZxA')]},
+ {id:'x_stiff',n:'Stiff com barra',tp:'LIVRE',m:'Posterior',p:'3 × 8–10',s:3,r:150,star:1,t:T(['DESCE',4],['PAUSA',1],['SOBE',2]),
+  why:'Exceção de polia: aqui a carga é a prioridade. O stiff na polia foi na terça.',
+  setup:'Pés na largura do quadril, joelho com flexão fixa. Barra colada na perna.',
+  exec:['Desce em 4s empurrando o quadril para trás.','Desce até o alongamento máximo do posterior, coluna neutra.','Sobe em 2s apertando o glúteo.'],
+  erro:'Virar agachamento. O quadril vai para trás, a coluna não curva.',
+  v:[V('x5gNKXFuloU')]},
+ {id:'x_bulg',n:'Afundo búlgaro · foco quadríceps',tp:'LIVRE',m:'Quadríceps',p:'3 × 8–12 cada perna',s:3,r:120,t:T(['DESCE',3],['PAUSA',1],['SOBE',1]),
+  why:'Exceção de polia: não existe equivalente em cabo.',
+  setup:'Peito do pé de trás no banco, passo mais curto e tronco ereto. O joelho da frente avança.',
+  exec:['Desce em 3s até o joelho de trás tocar quase o chão.','Pausa 1s e sobe em 1s.'],
+  erro:'Passo curto demais pode estressar o joelho. O pé da frente fica à vontade.',
+  v:[V('e64u4A1i_rA')]},
+ {id:'x_flexd',n:'Flexão de perna deitada na polia',tp:'POLIA',m:'Posterior',p:'3 × 10–15',s:3,r:90,f:1,t:T(['FLEXIONA',2],['APERTA',1],['VOLTA',3]),
+  setup:'Deitada de bruços no banco, tornozeleira na polia baixa, quadril colado ao banco.',
+  exec:['Flexiona em 2s trazendo o calcanhar ao glúteo.','Pausa 1s.','Volta em 3s.'],
+  erro:'Levantar o quadril do banco.',
+  v:[V('9OgGx-vsKxc'),V('Atl5qhOfJpQ')]},
+ {id:'x_panc',n:'Panturrilha na polia',tp:'POLIA',m:'Panturrilha',p:'3 × 12–20',s:3,r:60,t:T(['DESCE',3],['ALONGA',2],['SOBE',1],['APERTA',1]),
+  setup:'Em pé sobre um degrau, ponta do pé, cabo ou barra com carga nas mãos ou cinto. Calcanhar livre para descer abaixo da linha.',
+  exec:['Desce em 3s até o alongamento máximo.','Pausa 2s embaixo.','Sobe em 1s e aperta 1s no topo.'],
+  erro:'Amplitude curta e quicar.',
+  v:[V('i7M78X1YMs8')]},
+ {id:'x_abd',n:'Abdução em pé na polia (manutenção)',tp:'POLIA',m:'Glúteo',p:'2 × 15–20 cada perna',s:2,r:60,t:T(['ABRE',2],['SEGURA',1],['FECHA',3]),
+  setup:'Mesma posição de quinta, carga mais leve para finalizar com pump.',
+  exec:['Abre 2s, segura 1s, fecha 3s.'],
+  erro:'Fecha o dia sem falhar de maneira desorganizada. Controle o corpo todo.',
+  v:[V('hQOfjxHnRvg')]}
+]},
+
+sab:{nome:'SÁBADO',foco:'Quadríceps',ex:[
+ {id:'b_hack',n:'Agachamento hack (máquina)',tp:'MÁQUINA',m:'Quadríceps',p:'4 × 8–12',s:4,r:150,star:1,t:T(['DESCE',3],['PAUSA',1],['SOBE',2]),
+  why:'Exceção de polia: base pesada do dia. A polia entra nos exercícios seguintes.',
+  setup:'Pés baixos e juntos na plataforma. Costas coladas, ombros nas almofadas.',
+  exec:['Desce em 3s o mais fundo possível, calcanhar no chão.','Pausa 1s embaixo.','Sobe em 2s sem travar o joelho.'],
+  erro:'Calcanhar saindo do chão.',
+  v:[V('4cxt_Tldugw')]},
+ {id:'b_sissy',n:'Sissy squat na polia',tp:'POLIA',m:'Quadríceps',p:'3 × 8–15',s:3,r:90,t:T(['DESCE',3],['SOBE',2]),
+  setup:'Mesmo ajuste de terça: cabo ao peito ou cinto, mão apoiada, joelhos à frente.',
+  exec:['Desce em 3s até o alongamento máximo do quadríceps.','Sobe em 2s apertando.'],
+  erro:'Dobrar o quadril. O corpo é uma prancha que gira nos joelhos.',
+  v:[V('dF8VQDzywBo')]},
+ {id:'b_ext',n:'Cadeira extensora (recostada)',tp:'MÁQUINA',m:'Quadríceps',p:'4 × 12–20',s:4,r:75,f:1,t:T(['SOBE',1],['APERTA',2],['DESCE',4]),
+  why:'Exceção de polia: carga e posição recostada. A versão com cabo vem em seguida.',
+  tec:'Última série: drop set 2× e depois 10 parciais na posição alongada (a parte de baixo do movimento).',
+  setup:'Costas recostadas, joelho no eixo, segura as alças.',
+  exec:['Sobe em 1s.','Pausa 2s apertando.','Desce em 4s.'],
+  erro:'Soltar o peso. A excêntrica é metade do estímulo.',
+  v:[V('ljO4jkwv8wQ')]},
+ {id:'b_extc',n:'Extensão de joelho na polia',tp:'POLIA',m:'Quadríceps',p:'3 × 12–15 cada perna',s:3,r:75,f:1,t:T(['SOBE',1],['APERTA',2],['DESCE',3]),
+  setup:'Sentada num banco de frente para a polia baixa, tornozeleira, joelho no canto do banco. Apoia o tronco.',
+  exec:['Estende o joelho em 1s.','Pausa 2s no topo.','Desce em 3s.'],
+  erro:'Balançar o tronco. É quadríceps unilateral.',
+  v:[V('rQJ8qSArGt0')]},
+ {id:'b_pant',n:'Panturrilha no leg press',tp:'MÁQUINA',m:'Panturrilha',p:'3 × 10–20',s:3,r:60,t:T(['DESCE',3],['ALONGA',2],['SOBE',1],['APERTA',1]),
+  why:'Exceção de polia: usa carga alta no leg press.',
+  setup:'Ponta do pé na borda baixa da plataforma, joelhos quase estendidos.',
+  exec:['Desce em 3s, pausa 2s alongada, sobe em 1s e aperta 1s.'],
+  erro:'Travar os joelhos com carga alta. Mantém levemente flexionados.',
+  v:[V('Ua7jx6wKyMw')]}
+]}
+};
+const DIAS=[['seg','SEG'],['ter','TER'],['qua','QUA'],['qui','QUI'],['sex','SEX'],['sab','SÁB']];
+
+const VIDS={"3VyJNC1Gh1k": {"t": "Quer panturrilhas mais largas Faça esse exercício panturrilha sentado🔥Muita gente esquece que", "c": "Laércio Refundini"}, "3vbYw9xklBc": {"t": "Como Fazer a ELEVAÇÃO LATERAL Na Polia (Aprenda e 1 Minuto)", "c": "Laércio Refundini - Aulas"}, "4cxt_Tldugw": {"t": "9 Hack Squat Mistakes and How to Fix Them", "c": "Renaissance Periodization"}, "9OgGx-vsKxc": {"t": "FLEXORA DEITADO CROSS (PERNA)", "c": "Energize Academia"}, "AFG0wxXmTH4": {"t": "CADEIRA FLEXORA | Aprenda a técnica para desenvolver POSTERIOR de coxa", "c": "Tay Training"}, "Atl5qhOfJpQ": {"t": "Lying Cable Hamstring Curl: How To", "c": "Hammer Fitness"}, "BMsC8Zllrmc": {"t": "Rosca Punho Invertida Polia Baixa Barra Reta [ANTEBRAÇO - EXTENSORES DE PUNHO]", "c": "Treinador Lucas Pereira"}, "EHHKXwVcAoM": {"t": "REMADA BAIXA: 5 Erros Mais Comuns e Como Evitá-los na Remada Baixa", "c": "Laércio Refundini"}, "HcyPuf31RmE": {"t": "Como afinar e definir as costas - REMADA UNILATERAL", "c": "Tay Training"}, "IW-xVGlldho": {"t": "Exercício poderoso para SEU GLÚTEO - Elevação Pélvica Unilateral", "c": "Tay Training"}, "Ji_KYs4w59U": {"t": "ROSCA INVERSA NA POLIA - O JEITO CERTO", "c": "Miqueias Alves Personal"}, "KYhMic5gn9U": {"t": "Técnica para ATIVAR mais o GLÚTEO na ELEVAÇÃO PÉLVICA", "c": "Tay Training"}, "KhK5HWJfsrQ": {"t": "PULLEY TRÍCEPS CORDA - FAÇA ASSIM!", "c": "Miqueias Alves Personal"}, "LGlgmlCkuWg": {"t": "Desplante Cruzado / Curtsy Lunge", "c": "Karen Zárate"}, "PlQOxSm_ZWI": {"t": "TRÍCEPS FRANCÊS CORDA - COMO FAZER CORRRETAMENTE", "c": "Miqueias Alves Personal"}, "QTQABcLosXk": {"t": "5 Erros Que Todo Mundo Faz no PULLDOWN (Cresça Sua Dorsal)", "c": "Laércio Refundini"}, "Rf_Negac_FA": {"t": "B Stance Dumbbell Hip Thrust", "c": "Functional Bodybuilding"}, "SozaXNWVZxA": {"t": "Como fazer agachamento SUMÔ ativando mais o GLÚTEO", "c": "Tay Training"}, "Ua7jx6wKyMw": {"t": "COMO FAZER PANTURRILHA NO LEG PRESS - Fisioprev", "c": "Guilherme Stellbrink I FisioPrev"}, "VyhB_4ILuzs": {"t": "ROSCA BAYESIAN - como fazer?", "c": "Coach Bocca"}, "WieGZholDKI": {"t": "Cable Hip Thrust", "c": "Avid Fitness"}, "XYCCcD0MxN8": {"t": "GLÚTEO NA POLIA do jeito CERTO - Sem doer a lombar", "c": "Tay Training"}, "YywSCu4Y360": {"t": "5 Erros no PULLEY FRENTE Que Você Comete!", "c": "Laércio Refundini"}, "agVfOWgs21Y": {"t": "ROSCA PUNHO NA POLIA - O JEITO CERTO", "c": "Miqueias Alves Personal"}, "btj6dDfAQ2w": {"t": "4 DICAS Para Construir Tríceps ENORMES com o TRÍCEPS CORDA", "c": "Laércio Refundini"}, "dF8VQDzywBo": {"t": "Sissy Squat: A execução perfeita", "c": "Demetrios Personal"}, "dZY4PRgzNkc": {"t": "Flexão de Joelho em Pé na Polia", "c": "Tábitha Ribeiro - Personal Trainer"}, "e64u4A1i_rA": {"t": "APRENDA A FAZER O AGACHAMENTO BÚLGARO DE UMA VEZ POR TODAS", "c": "Amanda Biuger | Academia"}, "f2rO8ZCMan8": {"t": "Cable RDL / Pull Through / Hamstring Exercise", "c": "Denvyr | Tall Girl Nutritionist"}, "f8AVh4VBbos": {"t": "Como Fazer a REMADA BAIXA (Aprenda em 1 Minuto)", "c": "Laércio Refundini - Aulas"}, "fe8hkrddMtE": {"t": "Pullover com corda polia alta - 4personal", "c": "4Nutrition Oficial"}, "hLeP8KiXLgY": {"t": "CRUCIFIXO INVERSO NA POLIA ALTA – COMO FAZER?", "c": "Miqueias Alves Personal"}, "hQOfjxHnRvg": {"t": "ABDUÇÃO DE QUADRIL NA POLIA", "c": "4Nutrition Oficial"}, "ho6RHQuqftY": {"t": "Qual o melhor exercício para o GLÚTEO? Subida com caneleira ou halteres", "c": "Tay Training"}, "i7M78X1YMs8": {"t": "Cable Calf Raise", "c": "OPEX Fitness"}, "ljO4jkwv8wQ": {"t": "How To Do Leg Extensions With Perfect Technique (Grow Every Quad Head)", "c": "Jeff Nippard"}, "pdau2xieCCs": {"t": "Como AUMENTAR o  GLÚTEO com o Afundo Búlgaro", "c": "Tay Training"}, "pv8e6OSyETE": {"t": "Cable Pull Through", "c": "Renaissance Periodization"}, "qM1v8SG0yzY": {"t": "Abdução de Quadril na Polia: isole os glúteos e maximize o trabalho muscular.", "c": "Isabella Duarte Personal Online"}, "rQJ8qSArGt0": {"t": "EXTENSORA NA POLIA - GABRIEL SALES - PERSONAL TRAINER & CONSULTORIA ESPORTIVA", "c": "Gabriel Sales - Personal Trainer"}, "rcjr9e5OM9c": {"t": "Nei Farinazo | Cadeira Abdutora com Tronco Inclinado para Frente", "c": "Nei Farinazo"}, "rgljhH1X4vc": {"t": "How to Do Frog Pumps for Bigger Glutes (Glute Activation & Form Tips)", "c": "Colossus Fitness"}, "x5gNKXFuloU": {"t": "Como fazer o STIFF sem sentir a LOMBAR", "c": "Tay Training"}, "xDmFkJxPzeM": {"t": "How To Build Great Glutes with Perfect Hip Thrust Technique (Fix Mistakes!)", "c": "Jeff Nippard"}, "xIq9K_oeTK4": {"t": "Treino de PANTURRILHA Completo (Baseado Na Ciência)", "c": "Laércio Refundini"}, "xb1GMZacM8w": {"t": "FARMER WALK | Guia completo da caminhada do fazendeiro para incluir no treino funcional", "c": "Bruna Nunes - Treinamento Funcional"}, "yXopOhzEoeo": {"t": "How to PROPERLY Perform a Glute Pull Through | Fix Your Cable Pull Through Form NOW!", "c": "Colossus Fitness"}, "z4cDN2oTVxQ": {"t": "FACEPULL (PUXADA NA CARA) - 3 DICAS PARA FAZER CERTO", "c": "Fit Nerdz"}, "zjbKswHOH_I": {"t": "Nunca Mais Erre Isso no TRÍCEPS FRANCÊS (NÃO PODE FALTAR NO SEU TREINO)", "c": "Laércio Refundini"}, "zmmgrcRZc4I": {"t": "O SEU BUMBUM VAI EXPLODIR COM ESSA TÉCNICA NA CADEIRA ABDUTORA", "c": "Amanda Biuger | Academia"}};
+
+
+/* ============ datas (sempre no fuso LOCAL, nunca UTC) ============ */
+/*STREAK-START*/
+const pad=n=>String(n).padStart(2,'0');
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const hoje=()=>ds(new Date());
+const parse=s=>{const a=s.split('-').map(Number);return new Date(a[0],a[1]-1,a[2],12)};
+const addD=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return ds(d)};
+const dow=s=>parse(s).getDay(); /* 0 = domingo */
+/* Regras da sequência:
+   - concluir o treino do dia soma 1;
+   - domingo é descanso: não conta e NÃO quebra;
+   - faltar a um dia de treino (seg a sáb) zera a sequência;
+   - o dia de hoje ainda sem treino não quebra nada (ainda dá tempo). */
+function calcStreak(done,today){
+  const keys=Object.keys(done).sort();
+  if(!keys.length)return{cur:0,best:0,hojeFeito:false};
+  const min=keys[0];
+  const hojeFeito=!!done[today];
+  let cur=0,d=hojeFeito?today:addD(today,-1);
+  while(d>=min){
+    if(done[d])cur++;
+    else if(dow(d)!==0)break;
+    d=addD(d,-1);
+  }
+  let best=0,run=0;d=min;
+  while(d<=today){
+    if(done[d]){run++;if(run>best)best=run}
+    else if(dow(d)===0||d===today){}
+    else run=0;
+    d=addD(d,1);
+  }
+  return{cur,best,hojeFeito};
+}
+/*STREAK-END*/
+const diaHoje=()=>['dom','seg','ter','qua','qui','sex','sab'][new Date().getDay()];
+
+/* ============ estado ============ */
+let LOG=Store.get('ficha.log',{});
+let DONE=Store.get('ficha.done',{});
+let BEST=Store.get('ficha.best',0);
+let LS=Store.get('ficha.ls',{n:0});
+let QUEBRA=Store.get('ficha.quebra',null);
+let view=PLANO[diaHoje()]?diaHoje():'seg';
+let evMet='kg',evDia='todos';
+const salvaLog=()=>Store.set('ficha.log',LOG);
+const salvaDone=()=>Store.set('ficha.done',DONE);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const fmt=n=>(Math.round(n*10)/10).toString().replace('.',',');
+const dm=s=>s.split('-').reverse().slice(0,2).join('/');
+
+function reg(d,ex,i,campo,val){
+  LOG[d]=LOG[d]||{};LOG[d][ex]=LOG[d][ex]||{};
+  LOG[d][ex][i]=LOG[d][ex][i]||{};
+  LOG[d][ex][i][campo]=val;salvaLog();
+}
+function pega(d,ex,i){return (((LOG[d]||{})[ex])||{})[i]||{}}
+function anterior(ex){
+  const dsx=Object.keys(LOG).filter(d=>d<hoje()&&LOG[d][ex]&&Object.values(LOG[d][ex]).some(s=>s.ok)).sort();
+  if(!dsx.length)return null;
+  const d=dsx[dsx.length-1];
+  return{data:d,sets:LOG[d][ex]};
+}
+const num=v=>{const x=parseFloat(String(v==null?'':v).replace(',','.'));return isNaN(x)?0:x};
+const rm1=(k,r)=>k*(1+Math.min(r||1,15)/30); /* Epley, reps limitadas a 15 */
+
+/* ============ sessões e recordes (PR) ============ */
+function sessoes(id,antesDe){
+  const out=[];
+  Object.keys(LOG).sort().forEach(d=>{
+    if(antesDe&&d>=antesDe)return;
+    const ex=LOG[d][id];if(!ex)return;
+    const sets=Object.values(ex).filter(s=>s.ok&&num(s.kg)>0);
+    if(!sets.length)return;
+    let kg=0,reps=0,rm=0,vol=0;
+    sets.forEach(s=>{const k=num(s.kg),r=num(s.reps)||1;vol+=k*r;if(k>kg||(k===kg&&r>reps)){kg=k;reps=r}const e=rm1(k,r);if(e>rm)rm=e});
+    out.push({d,kg,reps,rm,vol});
+  });
+  let mk=0,mr=0,prev=null;
+  out.forEach((o,i)=>{
+    o.prKg=i>0&&o.kg>mk;o.prRm=i>0&&o.rm>mr+0.001;o.pr=o.prKg||o.prRm;
+    o.up=prev?o.kg>prev.kg:false;o.de=prev?prev.kg:0;
+    mk=Math.max(mk,o.kg);mr=Math.max(mr,o.rm);prev=o;
+  });
+  return out;
+}
+function setPR(id,s,d){
+  const ant=sessoes(id,d);if(!ant.length||!s.ok)return false;
+  const k=num(s.kg);if(!k)return false;
+  const mk=Math.max(...ant.map(x=>x.kg)),mr=Math.max(...ant.map(x=>x.rm));
+  return k>mk||rm1(k,num(s.reps)||1)>mr+0.001;
+}
+function acharEx(id){for(const k in PLANO){const e=PLANO[k].ex.find(x=>x.id===id);if(e)return e}}
+function prsDoDia(d){
+  const out=[];
+  Object.keys(LOG[d]||{}).forEach(id=>{
+    const e=acharEx(id);if(!e)return;
+    const ss=sessoes(id),s=ss.find(x=>x.d===d);
+    if(s&&s.pr)out.push({n:e.n,kg:s.kg,reps:s.reps});
+  });
+  return out;
+}
+function todosPRs(){
+  const out=[];
+  for(const k in PLANO)PLANO[k].ex.forEach(e=>sessoes(e.id).forEach(s=>{if(s.pr)out.push({d:s.d,n:e.n,kg:s.kg,reps:s.reps,id:e.id})}));
+  return out.sort((a,b)=>a.d<b.d?1:-1);
+}
+
+/* ============ sequência ============ */
+function streakNow(){
+  const s=calcStreak(DONE,hoje());
+  if(s.best>BEST){BEST=s.best;Store.set('ficha.best',BEST)}
+  if(s.cur>0){if(LS.n!==s.cur){LS={n:s.cur};Store.set('ficha.ls',LS)}if(QUEBRA){QUEBRA=null;Store.del('ficha.quebra')}}
+  else if(LS.n>0){QUEBRA={n:LS.n};Store.set('ficha.quebra',QUEBRA);LS={n:0};Store.set('ficha.ls',LS)}
+  s.melhor=BEST;return s;
+}
+function statusMsg(s){
+  if(s.hojeFeito)return['ok','Treino de hoje concluído. Sequência de '+s.cur+(s.cur===1?' dia':' dias')+' 🔥'];
+  if(diaHoje()==='dom'&&s.cur>0)return['ok','Domingo é descanso. Sua sequência de '+s.cur+' dias está segura 🔥'];
+  if(QUEBRA&&s.cur===0)return['warn2','Sequência de '+QUEBRA.n+' dias encerrada. Hoje começa uma nova, bora!'];
+  if(s.cur>0)return['','Conclua o treino de hoje para manter sua sequência de '+s.cur+(s.cur===1?' dia':' dias')+'.'];
+  return['','Conclua o treino de hoje para acender o foguinho 🔥'];
+}
+function totais(d,D){
+  let feitas=0,total=0;
+  D.ex.forEach(e=>{total+=e.s;for(let i=0;i<e.s;i++)if(pega(d,e.id,i).ok)feitas++});
+  return{feitas,total};
+}
+function concluir(auto){
+  const d=hoje();if(DONE[d])return;
+  const D=PLANO[view];if(!D)return;
+  const t=totais(d,D);
+  if(!auto&&t.feitas===0){toast('Marque pelo menos uma série primeiro');return}
+  if(!auto&&t.feitas<t.total&&!confirm('Faltam '+(t.total-t.feitas)+' séries. Concluir o treino mesmo assim?'))return;
+  const antes=BEST;
+  DONE[d]={dia:view,s:t.feitas,t:Date.now()};salvaDone();
+  const s=streakNow();
+  celebra(s,s.cur>1&&s.cur>antes,prsDoDia(d),t);
+  render();
+}
+function desfazer(){
+  if(!confirm('Desfazer a conclusão do treino de hoje? A sequência volta ao valor anterior.'))return;
+  delete DONE[hoje()];salvaDone();render();
+}
+const MARCOS=[3,7,14,21,30,50,75,100,150,200,365];
+function celebra(s,novoRec,prs,t){
+  const n=s.cur;
+  const frases=[
+    'Você não perdeu nenhum dia, continue na sua sequência!',
+    'Mais um dia no bolso. Quem é consistente, cresce.',
+    'O foguinho não apaga! Amanhã tem mais.',
+    'Sequência viva. Ninguém te segura!'];
+  const msg=n<=1?'Foguinho aceso! Primeiro dia da sequência: não pare agora.':frases[n%frases.length];
+  document.getElementById('celnum').textContent=Math.max(n-1,0);
+  document.getElementById('celtit').textContent=n<=1?'FOGUINHO ACESO':'TREINO CONCLUÍDO';
+  document.getElementById('celmsg').textContent=msg;
+  let x='<div>'+t.feitas+' / '+t.total+' séries · '+(PLANO[view]?PLANO[view].nome:'')+'</div>';
+  if(MARCOS.includes(n))x+='<div class="mk">🏅 MARCO: '+n+' DIAS SEGUIDOS</div>';
+  if(novoRec)x+='<div class="rec">🏆 NOVA MELHOR SEQUÊNCIA: '+n+' DIAS</div>';
+  prs.slice(0,6).forEach(p=>{x+='<div class="rec">🏆 RECORDE · '+esc(p.n)+' · '+fmt(p.kg)+' kg × '+p.reps+'</div>'});
+  document.getElementById('celx').innerHTML=x;
+  const c=document.getElementById('conf');const cores=['#F0A93B','#FF5C8A','#5FD3A6','#F4EFE6','#7A5620'];
+  c.innerHTML=Array.from({length:44},(_,i)=>`<i style="--x:${Math.random()*100}%;--c:${cores[i%5]};--d:${2.2+Math.random()*2}s;--dl:${Math.random()*.8}s;--r:${Math.round(Math.random()*900-450)}deg"></i>`).join('');
+  document.getElementById('cel').classList.add('up');
+  if(navigator.vibrate)navigator.vibrate([60,40,60,40,180]);
+  const el=document.getElementById('celnum');const a=Math.max(n-1,0),t0=performance.now();
+  (function step(now){const p=Math.min((now-t0-450)/700,1);if(p>=1){el.textContent=n;return}el.textContent=p<0?a:Math.round(a+(n-a)*p);requestAnimationFrame(step)})(t0);
+}
+function closeCel(){document.getElementById('cel').classList.remove('up')}
+let toastT=null;
+function toast(m){
+  const t=document.getElementById('toast');t.textContent=m;t.classList.add('up');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('up'),2600);
+}
+
+/* ============ render ============ */
+function go(v){view=v;render();window.scrollTo(0,0)}
+function render(){
+  const s=streakNow();
+  const f=document.getElementById('fire');
+  f.className='fire '+(s.hojeFeito?'on':s.cur>0?'wait':'');
+  f.innerHTML='<span class="fl">🔥</span><div><b>'+s.cur+'</b><small>'+(s.cur===1?'DIA':'DIAS')+'</small></div>';
+  document.getElementById('rail').innerHTML=
+    DIAS.map(([k,l])=>`<button class="day ${view===k?'on':''} ${diaHoje()===k?'hoje':''}" onclick="go('${k}')">${l}</button>`).join('')
+    +`<button class="day util ${view==='seq'?'on':''}" onclick="go('seq')">🔥 Sequência</button>`
+    +`<button class="day util ${view==='evo'?'on':''}" onclick="go('evo')">Evolução</button>`
+    +`<button class="day util ${view==='guia'?'on':''}" onclick="go('guia')">Guia</button>`;
+  const m=document.getElementById('main');
+  if(view==='guia')m.innerHTML=viewGuia();
+  else if(view==='evo')m.innerHTML=viewEvo();
+  else if(view==='seq')m.innerHTML=viewSeq(s);
+  else m.innerHTML=viewDia(PLANO[view],s);
+}
+
+function viewDia(D,s){
+  const d=hoje();
+  const t=totais(d,D);
+  const pct=t.total?Math.round(t.feitas/t.total*100):0;
+  const sm=statusMsg(s);
+  const feito=!!DONE[d];
+  return `<div class="dhead">
+    <h1>${D.nome}</h1><p>${D.foco}</p>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+    <div class="barlbl">${t.feitas} / ${t.total} SÉRIES · ${pct}%</div>
+    <div class="stmsg ${sm[0]}">${sm[1]}</div>
+  </div>`+D.ex.map((e,ix)=>cardEx(e,ix,d)).join('')
+  +(feito?`<button class="concl feito" disabled>✓ TREINO DE HOJE CONCLUÍDO</button><button class="undo" onclick="desfazer()">DESFAZER CONCLUSÃO</button>`
+         :`<button class="concl" onclick="concluir(false)">🔥 CONCLUIR TREINO</button>`)
+  +`<p class="note">Regra que faz tudo funcionar: abra a série anterior em cinza embaixo de cada linha e <b>bata aquele número</b>, com mais uma repetição ou mais carga. Quando fechar o topo da faixa em todas as séries, sobe 2,5 kg. Dor muscular não é métrica; carga subindo é. Ao marcar a última série o treino conclui sozinho e acende o foguinho.</p>`;
+}
+
+function tagTp(tp){return tp==='POLIA'?'<span class="tagp">POLIA</span>':tp==='MÁQUINA'?'<span class="tagp mq">MÁQUINA</span>':'<span class="tagp lv">LIVRE</span>'}
+function vidLink(id){
+  const v=VIDS[id]||{t:'Vídeo no YouTube',c:''};
+  return `<a class="vid" href="https://www.youtube.com/watch?v=${id}" target="_blank" rel="noopener noreferrer"><i>▶</i><span><b>Ver vídeo</b><em>${esc(v.t.slice(0,70))}${v.c?' · '+esc(v.c):''}</em></span></a>`;
+}
+function cardEx(e,ix,d){
+  const ant=anterior(e.id);
+  const open=Store.get('ficha.open.'+e.id,false);
+  const todas=Array.from({length:e.s},(_,i)=>pega(d,e.id,i).ok).every(Boolean);
+  let sets='';
+  for(let i=0;i<e.s;i++){
+    const s=pega(d,e.id,i);
+    const a=ant?ant.sets[i]:null;
+    let g='';
+    const pr=s.ok&&setPR(e.id,s,d);
+    if(a&&a.kg){
+      const bateu=s.ok&&s.kg&&(num(s.kg)>num(a.kg)||(num(s.kg)===num(a.kg)&&num(s.reps)>num(a.reps)));
+      g=`<div class="ghost ${bateu?'beat':''}">${pr?'<span class="prb">🏆 RECORDE</span> · ':''}${bateu?'▲ superou':'anterior'} <b>${a.kg}kg × ${a.reps||'—'}</b></div>`;
+    }else if(pr)g=`<div class="ghost"><span class="prb">🏆 RECORDE</span></div>`;
+    const ultima=(i===e.s-1&&e.f);
+    sets+=`<div class="srow">
+      <div class="slbl">${ultima?'<span style="color:var(--hot)">S'+(i+1)+'</span>':'S'+(i+1)}</div>
+      <div class="fld"><input inputmode="decimal" placeholder="—" value="${esc(s.kg||'')}" onchange="reg('${d}','${e.id}',${i},'kg',this.value);render()"><u>KG</u></div>
+      <div class="fld"><input inputmode="numeric" placeholder="—" value="${esc(s.reps||'')}" onchange="reg('${d}','${e.id}',${i},'reps',this.value);render()"><u>REPS</u></div>
+      <button class="ck ${s.ok?'on':''}" onclick="marcar('${d}','${e.id}',${i},${e.r})">✓</button>
+    </div>${g}`;
+  }
+  const plano=e.pl||(e.t?e.t.map(x=>x.f+' '+x.s+'s').join(' · '):'');
+  return `<section class="ex ${e.star?'star':''} ${open?'open':''} ${todas?'done':''}" id="ex-${e.id}">
+    <button class="exhead" onclick="toggleEx('${e.id}')">
+      <div class="num">${String(ix+1).padStart(2,'0')}</div>
+      <div class="extit">
+        <h2>${e.n}${tagTp(e.tp)}${e.f?'<span class="tagf">ÚLT. À FALHA</span>':''}</h2>
+        <div class="meta">${e.p} · descanso ${e.r>=60?fmt(e.r/60)+' min':e.r+'s'}</div>
+      </div>
+      <div class="caret">▾</div>
+    </button>
+    <div class="detail">
+      ${e.t?`<button class="btempo" onclick="openMet('${e.id}')">▶ GUIAR TEMPO · ${plano}</button>`:''}
+      ${e.why?`<div class="dsec why"><h3>POR QUE NÃO É POLIA</h3><p>${e.why}</p></div>`:''}
+      <div class="dsec"><h3>POSIÇÃO</h3><p>${e.setup}</p></div>
+      <div class="dsec"><h3>EXECUÇÃO</h3><ol>${e.exec.map(x=>'<li>'+x+'</li>').join('')}</ol></div>
+      ${e.tec?`<div class="dsec pump"><h3>PUMP · TÉCNICA AVANÇADA</h3><p>${e.tec}</p></div>`:''}
+      <div class="dsec warn"><h3>ATENÇÃO</h3><p>${e.erro}</p></div>
+      <div class="dsec"><h3>VÍDEOS</h3><div class="vids">${e.v.map(vidLink).join('')}</div>
+      <div class="vnote">Os vídeos abrem no YouTube e precisam de internet. O resto do app funciona offline.</div></div>
+    </div>
+    <div class="sets">${sets}</div>
+  </section>`;
+}
+
+function toggleEx(id){
+  const k='ficha.open.'+id;Store.set(k,!Store.get(k,false));
+  document.getElementById('ex-'+id).classList.toggle('open');
+}
+
+function marcar(d,ex,i,rest){
+  const s=pega(d,ex,i);
+  const novo=!s.ok;
+  reg(d,ex,i,'ok',novo);
+  if(navigator.vibrate)navigator.vibrate(novo?35:15);
+  const e=acharEx(ex);
+  render();
+  if(novo){
+    const s2=pega(d,ex,i);
+    if(setPR(ex,s2,d)){toast('🏆 RECORDE! '+fmt(num(s2.kg))+' kg × '+(s2.reps||1));if(navigator.vibrate)navigator.vibrate([40,40,40])}
+    const D=PLANO[view];
+    if(D&&!DONE[d]){const t=totais(d,D);if(t.feitas===t.total){stopRest();concluir(true);return}}
+    startRest(rest,e.n+' · série '+(i+1));
+  }
+}
+
+/* ============ descanso (baseado em relógio, sobrevive a bloquear a tela) ============ */
+let rT=null,rEnd=0,rTot=0;
+function startRest(sec,nome){
+  rTot=sec;rEnd=Date.now()+sec*1000;
+  document.getElementById('rname').textContent=nome;
+  document.getElementById('rest').classList.add('up');
+  clearInterval(rT);tickRest();
+  rT=setInterval(()=>{tickRest();if(rEnd-Date.now()<=0)fimRest()},250);
+}
+function tickRest(){
+  const left=Math.max(Math.ceil((rEnd-Date.now())/1000),0);
+  document.getElementById('rtime').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');
+  document.getElementById('rprog').style.width=(left/rTot*100)+'%';
+}
+function fimRest(){
+  clearInterval(rT);
+  if(navigator.vibrate)navigator.vibrate([90,70,90,70,200]);
+  document.getElementById('rtime').textContent='VAI';
+  setTimeout(stopRest,4000);
+}
+function addRest(s){rEnd+=s*1000;rTot+=s;tickRest()}
+function stopRest(){clearInterval(rT);document.getElementById('rest').classList.remove('up')}
+
+/* ============ metrônomo de tempo ============ */
+let mEx=null,mT=null,mFase=0,mLeft=0,mRep=0,mRun=false;
+const CIRC=2*Math.PI*54;
+function openMet(id){
+  mEx=acharEx(id);mFase=0;mRep=0;mLeft=0;mRun=false;clearInterval(mT);
+  document.getElementById('mname').textContent=mEx.n;
+  document.getElementById('mplan').textContent=mEx.t.map(x=>x.f+' '+x.s+'s').join('  ·  ');
+  document.getElementById('mphase').textContent='PRONTA?';
+  document.getElementById('mcount').textContent='—';
+  document.getElementById('mreps').textContent='REPETIÇÃO 0';
+  document.getElementById('mtoggle').textContent='COMEÇAR';
+  const f=document.getElementById('rfill');
+  f.style.strokeDasharray=CIRC;f.style.strokeDashoffset=0;
+  document.getElementById('met').classList.add('up');
+}
+function closeMet(){mRun=false;clearInterval(mT);document.getElementById('met').classList.remove('up')}
+function toggleMet(){
+  if(mRun){mRun=false;clearInterval(mT);document.getElementById('mtoggle').textContent='CONTINUAR';return}
+  mRun=true;document.getElementById('mtoggle').textContent='PAUSAR';
+  if(mLeft<=0){mFase=0;mLeft=mEx.t[0].s;mRep=1;pintaFase()}
+  clearInterval(mT);
+  mT=setInterval(()=>{
+    mLeft-=0.1;
+    if(mLeft<=0){
+      mFase++;
+      if(mFase>=mEx.t.length){mFase=0;mRep++;if(navigator.vibrate)navigator.vibrate([25,40,25])}
+      else if(navigator.vibrate)navigator.vibrate(22);
+      mLeft=mEx.t[mFase].s;pintaFase();
+    }
+    pintaTempo();
+  },100);
+  pintaFase();pintaTempo();
+}
+function pintaFase(){
+  const f=mEx.t[mFase];
+  document.getElementById('mphase').textContent=f.f;
+  document.getElementById('mreps').textContent='REPETIÇÃO '+mRep;
+  const cor=['SEGURA','APERTA','PAUSA','ALONGA'].includes(f.f)?'var(--win)':
+            ['DESCE','FECHA','VOLTA','ABRE'].includes(f.f)?'var(--hot)':'var(--amber)';
+  document.getElementById('rfill').style.stroke=cor;
+  document.getElementById('mcount').style.color=cor;
+}
+function pintaTempo(){
+  const tot=mEx.t[mFase].s;
+  document.getElementById('mcount').textContent=Math.max(mLeft,0).toFixed(1);
+  document.getElementById('rfill').style.strokeDashoffset=CIRC*(1-Math.max(mLeft,0)/tot);
+}
+
+/* ============ sequência: tela, calendário ============ */
+function viewSeq(s){
+  const hoj=hoje();
+  const semanas=16;
+  const dw=(dow(hoj)+6)%7;
+  const seg=addD(hoj,-dw);
+  const ini=addD(seg,-(semanas-1)*7);
+  let cells='';
+  for(let i=0;i<semanas*7;i++){
+    const d=addD(ini,i);
+    const sunday=dow(d)===0;
+    const temLog=LOG[d]&&Object.values(LOG[d]).some(ex=>Object.values(ex).some(x=>x.ok));
+    let c='hc';
+    if(d>hoj)c+=' fut';
+    else if(DONE[d])c+=' on';
+    else if(temLog)c+=' part';
+    else if(sunday)c+=' rest';
+    else if(d<hoj)c+=' miss';
+    if(d===hoj)c+=' hj';
+    cells+=`<div class="${c}" title="${d}"></div>`;
+  }
+  const keys=Object.keys(DONE);
+  const series=keys.reduce((a,k)=>a+(DONE[k].s||0),0);
+  const prs=todosPRs().length;
+  const on=s.hojeFeito;
+  const sm=statusMsg(s);
+  return `<div class="gsec"><h2>SUA SEQUÊNCIA</h2><p>Conclua o treino do dia para acender o foguinho. Domingo é descanso e não quebra a sequência. Faltar um dia de treino zera.</p>
+   <div class="hero ${s.cur>0?'on':'off'}"><div class="hf">🔥</div><div class="hn">${s.cur}</div><div class="hl">${s.cur===1?'DIA':'DIAS'} SEGUIDOS</div><p>${sm[1]}</p></div>
+   <div class="stats">
+     <div class="stat"><b>${s.melhor}</b><span>MELHOR SEQUÊNCIA</span></div>
+     <div class="stat"><b>${keys.length}</b><span>TREINOS</span></div>
+     <div class="stat"><b>${prs}</b><span>RECORDES 🏆</span></div>
+   </div>
+   <div class="stats"><div class="stat"><b>${series}</b><span>SÉRIES FEITAS</span></div>
+     <div class="stat"><b>${on?'✓':'—'}</b><span>HOJE</span></div>
+     <div class="stat"><b>${diaHoje()==='dom'?'DESC.':(PLANO[diaHoje()]||{nome:''}).nome.slice(0,3)}</b><span>TREINO DE HOJE</span></div></div>
+   <h2 style="font-family:var(--disp);font-size:24px;font-weight:800;margin:20px 0 8px">CALENDÁRIO · ${semanas} SEMANAS</h2>
+   <div class="card"><div class="hwrap"><div class="hdw"><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span><span>D</span></div><div class="heat">${cells}</div></div>
+   <div class="hleg"><span><i style="background:var(--amber)"></i>treinou</span><span><i style="background:var(--amber-dim)"></i>parcial</span><span><i style="background:var(--surface);border-color:#4a2a3a"></i>faltou</span><span><i style="border-style:dashed"></i>domingo</span></div></div>
+   <h2 style="font-family:var(--disp);font-size:24px;font-weight:800;margin:20px 0 8px">BACKUP</h2>
+   <div class="card"><p>Tudo fica salvo só neste aparelho. Antes de trocar de celular ou limpar dados do Safari, copie o backup e guarde numa nota.</p>
+   <button class="btn2" onclick="exportBkp()">COPIAR BACKUP</button><button class="btn2" onclick="importBkp()">RESTAURAR BACKUP</button>
+   <button class="danger" onclick="apagaTudo()">APAGAR TODOS OS DADOS</button></div></div>`;
+}
+function exportBkp(){
+  const j=JSON.stringify({v:1,log:LOG,done:DONE,best:BEST});
+  const ok=()=>toast('Backup copiado');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(j).then(ok,()=>prompt('Copie o backup:',j))}
+  else prompt('Copie o backup:',j);
+}
+function importBkp(){
+  const t=prompt('Cole aqui o backup copiado:');if(!t)return;
+  try{
+    const o=JSON.parse(t);if(!o||typeof o.log!=='object'||typeof o.done!=='object')throw 0;
+    if(!confirm('Isso substitui todos os dados atuais. Continuar?'))return;
+    LOG=o.log;DONE=o.done;BEST=o.best||0;salvaLog();salvaDone();Store.set('ficha.best',BEST);LS={n:0};Store.set('ficha.ls',LS);render();toast('Backup restaurado');
+  }catch(e){alert('Backup inválido.')}
+}
+function apagaTudo(){
+  if(!confirm('Apagar todo o histórico, recordes e sequência? Não tem como desfazer.'))return;
+  ['ficha.log','ficha.done','ficha.best','ficha.ls','ficha.quebra'].forEach(k=>Store.del(k));
+  LOG={};DONE={};BEST=0;LS={n:0};QUEBRA=null;render();
+}
+
+/* ============ evolução ============ */
+function grafico(ss,met){
+  const W=300,H=96,px=26,py=12;
+  const val=s=>met==='kg'?s.kg:met==='rm'?s.rm:s.vol;
+  const vs=ss.map(val);
+  const mx=Math.max(...vs),mn=Math.min(...vs);
+  const rng=mx-mn||1;
+  const X=i=>ss.length>1?px+i/(ss.length-1)*(W-px-8):(W+px)/2;
+  const Y=v=>mx===mn?H/2:H-py-((v-mn)/rng)*(H-2*py);
+  const pts=ss.map((s,i)=>X(i)+','+Y(val(s))).join(' ');
+  const un=met==='vol'?'':' kg';
+  const f=v=>met==='vol'?Math.round(v):fmt(v);
+  return `<svg viewBox="0 0 ${W} ${H+14}" role="img" aria-label="gráfico de evolução">
+    <line x1="${px}" y1="${py}" x2="${W-8}" y2="${py}" stroke="#372C48" stroke-width=".6" stroke-dasharray="2 3"/>
+    <line x1="${px}" y1="${H-py}" x2="${W-8}" y2="${H-py}" stroke="#372C48" stroke-width=".6" stroke-dasharray="2 3"/>
+    <text x="1" y="${py+3}" fill="#9A8CAC" font-size="7" font-family="monospace">${f(mx)}</text>
+    <text x="1" y="${H-py+3}" fill="#9A8CAC" font-size="7" font-family="monospace">${f(mn)}</text>
+    <polyline points="${pts}" fill="none" stroke="#F0A93B" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    ${ss.map((s,i)=>`<circle cx="${X(i)}" cy="${Y(val(s))}" r="${s.pr?4:2.4}" fill="${s.pr?'#F0A93B':'#F4EFE6'}" ${s.pr?'stroke="#171320" stroke-width="1.2"':''}/>`).join('')}
+    <text x="${px}" y="${H+10}" fill="#9A8CAC" font-size="7" font-family="monospace">${dm(ss[0].d)}</text>
+    <text x="${W-8}" y="${H+10}" fill="#9A8CAC" font-size="7" font-family="monospace" text-anchor="end">${dm(ss[ss.length-1].d)}</text>
+  </svg>`;
+}
+function viewEvo(){
+  const exs=[];
+  for(const k in PLANO)if(evDia==='todos'||evDia===k)PLANO[k].ex.forEach(e=>{if(e.id!=='u_giga')exs.push({e,dia:k,ss:sessoes(e.id)})});
+  const comDados=exs.filter(x=>x.ss.length>0);
+  const prsAll=todosPRs();
+  const metL={kg:'CARGA (KG)',rm:'1RM ESTIMADO',vol:'VOLUME'};
+  const chipsD=`<div class="chips"><button class="chip ${evDia==='todos'?'on':''}" onclick="evDia='todos';render()">TODOS</button>`+DIAS.map(([k,l])=>`<button class="chip ${evDia===k?'on':''}" onclick="evDia='${k}';render()">${l}</button>`).join('')+'</div>';
+  const chipsM=`<div class="chips">`+Object.keys(metL).map(k=>`<button class="chip ${evMet===k?'on':''}" onclick="evMet='${k}';render()">${metL[k]}</button>`).join('')+'</div>';
+  let h=`<div class="gsec"><h2>EVOLUÇÃO</h2><p>Cada série marcada com carga entra aqui. A linha precisa subir; o ponto dourado é recorde.</p>
+    <div class="stats"><div class="stat"><b>${prsAll.length}</b><span>RECORDES 🏆</span></div>
+    <div class="stat"><b>${comDados.reduce((a,x)=>a+x.ss.filter(s=>s.up).length,0)}</b><span>AUMENTOS DE CARGA</span></div>
+    <div class="stat"><b>${comDados.length}</b><span>EXERCÍCIOS</span></div></div>`;
+  if(prsAll.length){
+    h+=`<div class="card hi"><h4><em>RECENTES</em>Últimos recordes</h4>`+prsAll.slice(0,6).map(p=>`<div class="recl"><div>🏆 ${esc(p.n)}</div><span>${fmt(p.kg)} kg × ${p.reps} · ${dm(p.d)}</span></div>`).join('')+'</div>';
+  }
+  h+=chipsD+chipsM;
+  if(!comDados.length){
+    h+=`<div class="empty">Nada registrado${evDia==='todos'?' ainda':' neste dia'}.<br>Marque séries com carga no treino e o gráfico de cada exercício aparece aqui.</div>`;
+  }else{
+    h+=comDados.map(({e,ss})=>{
+      const prN=ss.filter(s=>s.pr).length;
+      const ult=ss[ss.length-1],pri=ss[0];
+      const dif=ult.kg-pri.kg;
+      const incs=ss.filter(s=>s.up).slice(-5).reverse();
+      return `<div class="evx ${prN?'pr':''}"><div class="top"><b>${e.n}</b>${prN?`<span class="badge">🏆 ${prN} PR</span>`:''}</div>
+       <div class="sub">MELHOR <b>${fmt(Math.max(...ss.map(s=>s.kg)))} kg</b> · 1RM EST. <b>${fmt(Math.max(...ss.map(s=>s.rm)))} kg</b> · ${ss.length} ${ss.length===1?'SESSÃO':'SESSÕES'} · ${dif>0?'+':''}${fmt(dif)} kg desde o início</div>
+       ${grafico(ss,evMet)}
+       ${incs.length?`<div class="inc">${incs.map(s=>`<div><span>${dm(s.d)} · aumentou a carga</span><b>${fmt(s.de)} → ${fmt(s.kg)} kg (+${fmt(s.kg-s.de)})</b></div>`).join('')}</div>`:''}
+      </div>`;
+    }).join('');
+  }
+  return h+'</div>';
+}
+
+/* ============ guia ============ */
+const REGRAS=[
+ ['Cabo primeiro, máquina só quando precisa','Todo exercício leva a etiqueta POLIA, MÁQUINA ou LIVRE. Máquina ou halter só entram onde não existe versão em cabo com a mesma sobrecarga ou posição (abdutora, hack, extensora, flexora sentada, panturrilha pesada).'],
+ ['Chegar perto da falha','Compostos param com 1–2 reps na reserva. Isoladores: a última série (etiqueta ÚLT. À FALHA) vai até a falha real.'],
+ ['Bater o número anterior','Cada série mostra o resultado da última sessão. Superar aquele número é o objetivo e gera recorde.'],
+ ['Descansar de verdade','2 a 3 min nos compostos, 60 s a 2 min nos isoladores. O cronômetro dispara sozinho ao marcar a série.'],
+ ['Excêntrica de 3 a 4 segundos','A fase de descida é onde o músculo mais cresce. Use o GUIAR TEMPO em cada exercício.'],
+ ['Pausa na contração','1 a 2 segundos apertando no pico dos isoladores.'],
+ ['Amplitude completa','O maior crescimento vem da posição alongada. Meia amplitude corta justamente ela.'],
+ ['Sono e comida','Volume alto só funciona com recuperação. Dormir 7 a 9 h e comer proteína suficiente decidem o resultado.']
+];
+const TECS=[
+ ['Drop set','Na falha, tira 25–30% da carga e continua sem descanso. 1 a 2 quedas, só na última série.'],
+ ['Rest-pause','Vai à falha, descansa 15 s, faz mais reps até a falha, descansa 15 s e repete mais uma vez.'],
+ ['Parciais no alongamento','Ao chegar na falha, continua com reps curtas só na metade alongada do movimento.'],
+ ['Pausa isométrica','2 s parada na contração máxima. Dói mais e usa menos carga, que é justamente o ponto.'],
+ ['Giga série','Três exercícios do mesmo músculo sem descanso. Entra como finalizador da quinta.']
+];
+function viewGuia(){
+  const vol={};
+  for(const k in PLANO)PLANO[k].ex.forEach(e=>{vol[e.m]=(vol[e.m]||0)+e.s});
+  const mx=Math.max(...Object.values(vol));
+  let polia=0,tot=0;
+  for(const k in PLANO)PLANO[k].ex.forEach(e=>{tot+=e.s;if(e.tp==='POLIA')polia+=e.s});
+  return `<div class="gsec"><h2>AS REGRAS</h2><p>Valem para todos os exercícios da ficha.</p>
+    <div class="card rules">${REGRAS.map((r,i)=>`<div class="rule"><i>${String(i+1).padStart(2,'0')}</i><div><b>${r[0]}</b><span>${r[1]}</span></div></div>`).join('')}</div></div>
+   <div class="gsec"><h2>VOLUME SEMANAL</h2><p>Séries diretas por grupo na semana. Glúteo e quadríceps aparecem em 3 dias cada; posterior e panturrilha em 2 a 3.</p>
+    <div class="card">${Object.keys(vol).sort((a,b)=>vol[b]-vol[a]).map(m=>`<div class="vbar"><u>${m.toUpperCase()}</u><div><i style="width:${vol[m]/mx*100}%"></i></div><b>${vol[m]}</b></div>`).join('')}
+    <p class="alvo" style="margin-top:8px">${Math.round(polia/tot*100)}% DAS SÉRIES SÃO NA <b>POLIA</b> · ${tot} SÉRIES NA SEMANA</p></div>
+    <div class="card"><p>É volume alto, pensado para uma atleta avançada. Se na primeira semana a recuperação ficar ruim, tira 1 série de cada exercício composto antes de mexer em qualquer outra coisa.</p></div></div>
+   <div class="gsec"><h2>TÉCNICAS DE PUMP</h2><p>Só na última série do exercício marcado.</p>
+    ${TECS.map(t=>`<div class="card"><h4>${t[0]}</h4><p>${t[1]}</p></div>`).join('')}</div>
+   <div class="gsec"><h2>CADEIRA ABDUTORA</h2><p>A exceção pedida: máquina, não polia.</p>
+    <div class="card hi"><h4><em>NA QUINTA</em>Pontinha do banco, tronco ~45°</h4><p>Senta na beirada da frente, inclina o tronco ~45° à frente com a coluna reta, segura as alças só para travar o tronco e roda joelhos e pés para fora. Abre em 2 s, segura 2 s, fecha em 3 s sem encostar as placas. A ênfase é no glúteo médio e no pump.</p></div></div>
+   <div class="gsec"><h2>PROGRESSÃO</h2><p>Dupla progressão, o motor de tudo.</p>
+    <div class="card"><p>Num exercício de <b>4 × 8–12</b> a faixa é uma janela. Quando fechar <b>12 repetições em todas as séries</b> com técnica limpa, sobe 2,5 kg e as reps caem para 8–9. A aba Evolução mostra cada aumento de carga e cada recorde.</p></div></div>
+   <p class="note">Plano baseado em princípios gerais de hipertrofia. Vale validar a execução do stiff, do hack e do búlgaro com um profissional presencialmente. Os vídeos são de terceiros no YouTube, abrem fora do app e precisam de internet.</p>`;
+}
+
+/* ============ início ============ */
+render();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){if(rEnd&&document.getElementById('rest').classList.contains('up'))tickRest();render()}});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1')){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+
+</script>
+</body>
+</html>
