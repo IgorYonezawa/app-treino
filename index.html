@@ -328,6 +328,12 @@ input{-webkit-user-select:text;user-select:text}
 .vbtn b{font-size:13px;font-weight:700;color:var(--amber)}
 .vbtn em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.05em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 
+/* dupla step-down + scoop */
+.tagd{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:800;letter-spacing:.12em;border-radius:4px;padding:2px 7px;margin-left:6px;vertical-align:1px;background:var(--amber);color:#171320}
+.ex.dupla{border-left:3px solid var(--amber)}
+.ex.dupla.d1{margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.ex.dupla.d2{margin-top:-1px;border-top-left-radius:0;border-top-right-radius:0}
+
 </style>
 </head>
 <body>
@@ -402,14 +408,14 @@ seg:{nome:'SEGUNDA',foco:'Glúteo · máximo + base pesada',ex:[
   exec:['Empurra o quadril para trás, coluna neutra, corda passando entre as pernas.','Sente o posterior e o glúteo alongarem.','Estende o quadril à frente apertando forte o glúteo no topo, sem arquear a lombar.'],
   erro:'Agachar em vez de levar o quadril para trás. Movimento de dobradiça, joelho quase parado.',
   v:[V('dLzdfOq_vRs'),V('ESVIhFh28DA')]},
- {id:'s_step',n:'Step-down com foco em glúteo (agachamento unilateral no caixote)',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,star:1,t:T(['DESCE',3],['SEGURA',1],['SOBE',2]),
+ {id:'s_step',dupla:1,n:'Step-down com foco em glúteo (agachamento unilateral no caixote)',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,star:1,t:T(['DESCE',3],['SEGURA',1],['SOBE',2]),
   why:'Exceção de polia: é o exercício de alongamento do glúteo que o vídeo recomenda. Parecido com o afundo, mas com uma perna no ar o glúteo faz quase todo o trabalho, e quase não deixa dolorida, então dá para treinar com mais frequência (o ideal é glúteo 2 a 3 vezes por semana).',
   tec:'Quando o peso do corpo ficar fácil: halter na mão oposta à perna de apoio. O glúteo médio estabiliza o quadril e trabalha junto.',
   setup:'Puxa um banco firme (que não se mova) para perto de um rack ou aparelho onde dá para se segurar, ex.: mãos na barra apoiada no rack. Sobe no banco com a perna de trabalho. Escolhe uma altura em que, lá embaixo, a coxa da perna da frente fique paralela ao chão. Se o banco for alto demais, coloca uma anilha sob o pé de trás para encurtar a repetição.',
   exec:['Dá um passo para trás com a perna livre, alinhada com o tronco. Empurra o quadril devagar para trás e inclina o tronco bem à frente, como se sentasse para trás.','Estende a perna livre atrás, na diagonal, até tocar levemente o chão. Segura essa posição embaixo: o glúteo fica bem alongado.','Sem impulso e sem se empurrar com a perna de trás, leva o quadril à frente com o glúteo da perna de apoio.','O joelho não avança demais sobre os dedos do pé: para mais glúteo, mantém o joelho alinhado com o pé.'],
   erro:'Deixar o joelho ir à frente dos dedos e tomar o movimento com o quadríceps, ou usar a perna de trás para se impulsionar. A perna livre só toca o chão de leve.',
   v:[V('DfoqpAwabWY@285')]},
- {id:'s_scoop',n:'Elevação pélvica · método scoop (queixo recolhido)',tp:'LIVRE',m:'Glúteo',p:'2 × 10–15',s:2,r:90,star:1,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
+ {id:'s_scoop',dupla:2,n:'Elevação pélvica · método scoop (queixo recolhido)',tp:'LIVRE',m:'Glúteo',p:'2 × 10–15',s:2,r:90,star:1,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
   why:'Exceção de polia: é o segundo exercício do vídeo, o que desafia o glúteo na posição de máxima contração e complementa o step-down logo acima (que trabalha no alongamento). Aqui são só 2 séries porque o treino já começou com a elevação pélvica pesada. Pode ser com barra, máquina de hip thrust ou unilateral.',
   tec:'Faz primeiro a versão básica (a elevação pélvica com pausa, no início do treino) até dominar, só depois migra para o scoop. No scoop não dá para usar tanta carga nem subir tão alto: use carga menor e foque na contração.',
   setup:'Parte superior das costas bem apoiada no banco, para dar estabilidade. Pés a uma distância em que, no topo, os joelhos fiquem alinhados diretamente sobre os pés (perto demais foca no quadríceps, longe demais no posterior). Contrai o abdômen.',
@@ -571,14 +577,14 @@ qui:{nome:'QUINTA',foco:'Glúteo · médio, mínimo e pump',ex:[
   exec:['Abre a perna lateralmente em 2s.','Segura 2s no topo.','Fecha em 3s com o tronco firme.'],
   erro:'Jogar o corpo para o lado contrário. Se isso acontece, o peso está alto demais.',
   v:[V('hQOfjxHnRvg'),V('qM1v8SG0yzY')]},
- {id:'u_sdown',n:'Step-down com foco em glúteo (agachamento unilateral no caixote)',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,star:1,t:T(['DESCE',3],['SEGURA',1],['SOBE',2]),
+ {id:'u_sdown',dupla:1,n:'Step-down com foco em glúteo (agachamento unilateral no caixote)',tp:'LIVRE',m:'Glúteo',p:'3 × 8–12 cada perna',s:3,r:120,star:1,t:T(['DESCE',3],['SEGURA',1],['SOBE',2]),
   why:'Exceção de polia: é o exercício de alongamento do glúteo que o vídeo recomenda. Parecido com o afundo, mas com uma perna no ar o glúteo faz quase todo o trabalho, e quase não deixa dolorida, então dá para treinar com mais frequência (o ideal é glúteo 2 a 3 vezes por semana).',
   tec:'Quando o peso do corpo ficar fácil: halter na mão oposta à perna de apoio. O glúteo médio estabiliza o quadril e trabalha junto.',
   setup:'Puxa um banco firme (que não se mova) para perto de um rack ou aparelho onde dá para se segurar, ex.: mãos na barra apoiada no rack. Sobe no banco com a perna de trabalho. Escolhe uma altura em que, lá embaixo, a coxa da perna da frente fique paralela ao chão. Se o banco for alto demais, coloca uma anilha sob o pé de trás para encurtar a repetição.',
   exec:['Dá um passo para trás com a perna livre, alinhada com o tronco. Empurra o quadril devagar para trás e inclina o tronco bem à frente, como se sentasse para trás.','Estende a perna livre atrás, na diagonal, até tocar levemente o chão. Segura essa posição embaixo: o glúteo fica bem alongado.','Sem impulso e sem se empurrar com a perna de trás, leva o quadril à frente com o glúteo da perna de apoio.','O joelho não avança demais sobre os dedos do pé: para mais glúteo, mantém o joelho alinhado com o pé.'],
   erro:'Deixar o joelho ir à frente dos dedos e tomar o movimento com o quadríceps, ou usar a perna de trás para se impulsionar. A perna livre só toca o chão de leve.',
   v:[V('DfoqpAwabWY@285')]},
- {id:'u_scoop',n:'Elevação pélvica · método scoop (queixo recolhido)',tp:'LIVRE',m:'Glúteo',p:'3 × 10–15',s:3,r:90,star:1,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
+ {id:'u_scoop',dupla:2,n:'Elevação pélvica · método scoop (queixo recolhido)',tp:'LIVRE',m:'Glúteo',p:'3 × 10–15',s:3,r:90,star:1,t:T(['SOBE',2],['APERTA',2],['DESCE',3]),
   why:'Exceção de polia: é o segundo exercício do vídeo, o que desafia o glúteo na posição de máxima contração e complementa o step-down (que trabalha no alongamento). Pode ser com barra, máquina de hip thrust ou unilateral.',
   tec:'Faz primeiro a versão básica (a de segunda) até dominar, só depois migra para o scoop. No scoop não dá para usar tanta carga nem subir tão alto: use carga menor e foque na contração.',
   setup:'Parte superior das costas bem apoiada no banco, para dar estabilidade. Pés a uma distância em que, no topo, os joelhos fiquem alinhados diretamente sobre os pés (perto demais foca no quadríceps, longe demais no posterior). Contrai o abdômen.',
@@ -918,11 +924,11 @@ function cardEx(e,ix,d){
     </div>${g}`;
   }
   const plano=e.pl||(e.t?e.t.map(x=>x.f+' '+x.s+'s').join(' · '):'');
-  return `<section class="ex ${e.star?'star':''} ${open?'open':''} ${todas?'done':''}" id="ex-${e.id}">
+  return `<section class="ex ${e.star?'star':''} ${e.dupla?'dupla d'+e.dupla:''} ${open?'open':''} ${todas?'done':''}" id="ex-${e.id}">
     <button class="exhead" onclick="toggleEx('${e.id}')">
       <div class="num">${String(ix+1).padStart(2,'0')}</div>
       <div class="extit">
-        <h2>${e.n}${tagTp(e.tp)}${e.f?'<span class="tagf">ÚLT. À FALHA</span>':''}</h2>
+        <h2>${e.n}${tagTp(e.tp)}${e.dupla?`<span class="tagd">DUPLA ${e.dupla}/2</span>`:''}${e.f?'<span class="tagf">ÚLT. À FALHA</span>':''}</h2>
         <div class="meta">${e.p} · descanso ${e.r>=60?fmt(e.r/60)+' min':e.r+'s'}</div>
       </div>
       <div class="caret">▾</div>
