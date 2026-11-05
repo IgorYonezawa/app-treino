@@ -1,5 +1,5 @@
 /* Service worker: guarda tudo para funcionar sem internet. Mude VERSAO ao atualizar o app. */
-const VERSAO='ficha-polia-v7';
+const VERSAO='ficha-polia-v8';
 const ARQUIVOS=[
   './','index.html','manifest.webmanifest',
   'icons/apple-touch-icon.png','icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png',
